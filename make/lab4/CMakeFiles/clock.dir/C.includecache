@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/display.h
+stdbool.h
+-
+stdint.h
+-
+stdlib.h
+-
+
+/fsb/bendunc/ecen330/lab4/clockControl.c
+clockControl.h
+/fsb/bendunc/ecen330/lab4/clockControl.h
+clockDisplay.h
+/fsb/bendunc/ecen330/lab4/clockDisplay.h
+display.h
+-
+stdio.h
+-
+
+/fsb/bendunc/ecen330/lab4/clockControl.h
+
+/fsb/bendunc/ecen330/lab4/clockDisplay.c
+clockDisplay.h
+/fsb/bendunc/ecen330/lab4/clockDisplay.h
+display.h
+-
+stdbool.h
+-
+stdio.h
+-
+
+/fsb/bendunc/ecen330/lab4/clockDisplay.h
+stdbool.h
+-
+

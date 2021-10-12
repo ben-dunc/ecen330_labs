@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../drivers/buttons.h
+stdint.h
+-
+
+../drivers/switches.h
+stdint.h
+-
+
+/fsb/bendunc/ecen330/lab2/main.c
+drivers/buttons.h
+/fsb/bendunc/ecen330/lab2/drivers/buttons.h
+drivers/switches.h
+/fsb/bendunc/ecen330/lab2/drivers/switches.h
+

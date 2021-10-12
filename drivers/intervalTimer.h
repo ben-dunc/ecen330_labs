@@ -15,6 +15,7 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 #ifndef INTERVALTIMER_H_
 #define INTERVALTIMER_H_
 
+#include "xil_io.h"
 #include <stdint.h>
 
 // Used to indicate status that can be checked after invoking the function.

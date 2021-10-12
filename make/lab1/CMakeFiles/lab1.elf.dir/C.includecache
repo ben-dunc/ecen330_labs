@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/display.h
+stdbool.h
+-
+stdint.h
+-
+stdlib.h
+-
+
+/fsb/bendunc/ecen330/lab1/main.c
+display.h
+/fsb/bendunc/ecen330/lab1/display.h
+stdio.h
+-
+

@@ -8,7 +8,9 @@
     "C_Cpp.clang_format_fallbackStyle": "LLVM",
     "files.associations": {
         "buttons.h": "c",
-        "xparameters.h": "c"
+        "xparameters.h": "c",
+        "tictactoecontrol.h": "c",
+        "stdint.h": "c"
     },
     "cmake.configureOnOpen": false
 }

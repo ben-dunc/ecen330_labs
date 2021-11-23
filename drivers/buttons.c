@@ -68,80 +68,40 @@ int32_t buttons_read() {
 
   // BTN 0
   if (reading & BUTTONS_BTN0_MASK && !(buttonsPushed & BUTTONS_BTN0_MASK)) {
-    // draw box
-    display_fillRect(BOX_WIDTH + BOX_WIDTH + BOX_WIDTH, Y_ORIGIN, BOX_WIDTH,
-                     BOX_HEIGHT, DISPLAY_YELLOW);
-    display_setCursor(BOX_WIDTH + BOX_WIDTH + BOX_WIDTH + TEXT_X, TEXT_Y);
-    display_setTextColor(DISPLAY_BLACK);
-    display_println(BTN0);
-
     // set buttonsPushed
     buttonsPushed = buttonsPushed | BUTTONS_BTN0_MASK;
   } else if (!(reading & BUTTONS_BTN0_MASK) &&
              buttonsPushed & BUTTONS_BTN0_MASK) {
-    // erase box
-    display_fillRect(BOX_WIDTH + BOX_WIDTH + BOX_WIDTH, Y_ORIGIN, BOX_WIDTH,
-                     BOX_HEIGHT, DISPLAY_BLACK);
-
     // set buttonsPushed
     buttonsPushed = buttonsPushed & ~BUTTONS_BTN0_MASK;
   }
 
   // BTN 1
   if (reading & BUTTONS_BTN1_MASK && !(buttonsPushed & BUTTONS_BTN1_MASK)) {
-    // draw box
-    display_fillRect(BOX_WIDTH + BOX_WIDTH, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT,
-                     DISPLAY_GREEN);
-    display_setCursor(BOX_WIDTH + BOX_WIDTH + TEXT_X, TEXT_Y);
-    display_setTextColor(DISPLAY_BLACK);
-    display_println(BTN1);
-
     // set buttonsPushed
     buttonsPushed = buttonsPushed | BUTTONS_BTN1_MASK;
   } else if (!(reading & BUTTONS_BTN1_MASK) &&
              buttonsPushed & BUTTONS_BTN1_MASK) {
-    // erase box
-    display_fillRect(BOX_WIDTH + BOX_WIDTH, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT,
-                     DISPLAY_BLACK);
-
     // set buttonsPushed
     buttonsPushed = buttonsPushed & ~BUTTONS_BTN1_MASK;
   }
 
   // BTN 2
   if (reading & BUTTONS_BTN2_MASK && !(buttonsPushed & BUTTONS_BTN2_MASK)) {
-    // draw box
-    display_fillRect(BOX_WIDTH, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT, DISPLAY_RED);
-    display_setCursor(BOX_WIDTH + TEXT_X, TEXT_Y);
-    display_setTextColor(DISPLAY_WHITE);
-    display_println(BTN2);
-
     // set buttonsPushed
     buttonsPushed = buttonsPushed | BUTTONS_BTN2_MASK;
   } else if (!(reading & BUTTONS_BTN2_MASK) &&
              buttonsPushed & BUTTONS_BTN2_MASK) {
-    // erase box
-    display_fillRect(BOX_WIDTH, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT, DISPLAY_BLACK);
-
     // set buttonsPushed
     buttonsPushed = buttonsPushed & ~BUTTONS_BTN2_MASK;
   }
 
   // BTN 3
   if (reading & BUTTONS_BTN3_MASK && !(buttonsPushed & BUTTONS_BTN3_MASK)) {
-    // draw box
-    display_fillRect(X_ORIGIN, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT, DISPLAY_BLUE);
-    display_setCursor(TEXT_X, TEXT_Y);
-    display_setTextColor(DISPLAY_WHITE);
-    display_println(BTN3);
-
     // set buttonsPushed
     buttonsPushed = buttonsPushed | BUTTONS_BTN3_MASK;
   } else if (!(reading & BUTTONS_BTN3_MASK) &&
              buttonsPushed & BUTTONS_BTN3_MASK) {
-    // erase box
-    display_fillRect(X_ORIGIN, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT, DISPLAY_BLACK);
-
     // set buttonsPushed
     buttonsPushed = buttonsPushed & ~BUTTONS_BTN3_MASK;
   }
@@ -157,6 +117,65 @@ void buttons_runTest() {
     printf("BUTTONS init failure. This may be a result of missing failure.\n");
   }
 
-  while (buttons_read() != ALL_BUTTONS_HIGH)
-    ;
+  while (buttons_read() != ALL_BUTTONS_HIGH) {
+    int32_t reading = buttons_read();
+
+    // BTN 0
+    if (reading & BUTTONS_BTN0_MASK && !(buttonsPushed & BUTTONS_BTN0_MASK)) {
+      // draw box
+      display_fillRect(BOX_WIDTH + BOX_WIDTH + BOX_WIDTH, Y_ORIGIN, BOX_WIDTH,
+                       BOX_HEIGHT, DISPLAY_YELLOW);
+      display_setCursor(BOX_WIDTH + BOX_WIDTH + BOX_WIDTH + TEXT_X, TEXT_Y);
+      display_setTextColor(DISPLAY_BLACK);
+      display_println(BTN0);
+    } else if (!(reading & BUTTONS_BTN0_MASK) &&
+               buttonsPushed & BUTTONS_BTN0_MASK) {
+      // erase box
+      display_fillRect(BOX_WIDTH + BOX_WIDTH + BOX_WIDTH, Y_ORIGIN, BOX_WIDTH,
+                       BOX_HEIGHT, DISPLAY_BLACK);
+    }
+
+    // BTN 1
+    if (reading & BUTTONS_BTN1_MASK && !(buttonsPushed & BUTTONS_BTN1_MASK)) {
+      // draw box
+      display_fillRect(BOX_WIDTH + BOX_WIDTH, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT,
+                       DISPLAY_GREEN);
+      display_setCursor(BOX_WIDTH + BOX_WIDTH + TEXT_X, TEXT_Y);
+      display_setTextColor(DISPLAY_BLACK);
+      display_println(BTN1);
+    } else if (!(reading & BUTTONS_BTN1_MASK) &&
+               buttonsPushed & BUTTONS_BTN1_MASK) {
+      // erase box
+      display_fillRect(BOX_WIDTH + BOX_WIDTH, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT,
+                       DISPLAY_BLACK);
+    }
+
+    // BTN 2
+    if (reading & BUTTONS_BTN2_MASK && !(buttonsPushed & BUTTONS_BTN2_MASK)) {
+      // draw box
+      display_fillRect(BOX_WIDTH, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT, DISPLAY_RED);
+      display_setCursor(BOX_WIDTH + TEXT_X, TEXT_Y);
+      display_setTextColor(DISPLAY_WHITE);
+      display_println(BTN2);
+    } else if (!(reading & BUTTONS_BTN2_MASK) &&
+               buttonsPushed & BUTTONS_BTN2_MASK) {
+      // erase box
+      display_fillRect(BOX_WIDTH, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT,
+                       DISPLAY_BLACK);
+    }
+
+    // BTN 3
+    if (reading & BUTTONS_BTN3_MASK && !(buttonsPushed & BUTTONS_BTN3_MASK)) {
+      // draw box
+      display_fillRect(X_ORIGIN, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT, DISPLAY_BLUE);
+      display_setCursor(TEXT_X, TEXT_Y);
+      display_setTextColor(DISPLAY_WHITE);
+      display_println(BTN3);
+    } else if (!(reading & BUTTONS_BTN3_MASK) &&
+               buttonsPushed & BUTTONS_BTN3_MASK) {
+      // erase box
+      display_fillRect(X_ORIGIN, Y_ORIGIN, BOX_WIDTH, BOX_HEIGHT,
+                       DISPLAY_BLACK);
+    }
+  }
 }

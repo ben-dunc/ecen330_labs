@@ -50,7 +50,6 @@ int32_t switches_init() {
 // returned value. bit3 = SW3, bit2 = SW2, bit1 = SW1, bit0 = SW0.
 int32_t switches_read() {
   int32_t reading = switches_readGpioRegister(DATA_OFFSET);
-  leds_write(reading);
   return reading;
 }
 
@@ -64,6 +63,7 @@ void switches_runTest() {
         "SWITCHES init failure. This may be a result of missing hardware.\n");
   }
 
-  while (switches_read() != ALL_SWITCHES_HIGH)
-    ;
+  while (switches_read() != ALL_SWITCHES_HIGH) {
+    leds_write(switches_read());
+  };
 }

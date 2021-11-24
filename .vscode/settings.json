@@ -10,7 +10,8 @@
         "buttons.h": "c",
         "xparameters.h": "c",
         "tictactoecontrol.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "simondisplay.h": "c"
     },
     "cmake.configureOnOpen": false
 }

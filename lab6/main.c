@@ -39,7 +39,7 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 // #define RUN_PROGRAM MILESTONE_1
 // #define RUN_PROGRAM MILESTONE_2
 // #define RUN_PROGRAM MILESTONE_3
-// #define RUN_PROGRAM MILESTONE_4
+#define RUN_PROGRAM MILESTONE_4
 
 // If nothing is uncommented above, run milestone 4
 #ifndef RUN_PROGRAM

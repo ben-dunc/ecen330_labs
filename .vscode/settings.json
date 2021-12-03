@@ -12,7 +12,8 @@
         "tictactoecontrol.h": "c",
         "stdint.h": "c",
         "simondisplay.h": "c",
-        "simoncontrol.h": "c"
+        "simoncontrol.h": "c",
+        "touchhandler.h": "c"
     },
     "cmake.configureOnOpen": false
 }

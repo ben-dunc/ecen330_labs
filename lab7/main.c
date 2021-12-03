@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <xparameters.h>
 
 #include "config.h"
@@ -24,27 +25,27 @@
 #define TOTAL_SECONDS 120
 #define MAX_INTERRUPT_COUNT (INTERRUPTS_PER_SECOND * TOTAL_SECONDS)
 
-static void initAll() {
+void initAll() {
   gameControl_init();
   pongControl_init();
 
+  pongControl_enable();
+
   display_init();
-  leds_init(true);
   display_fillScreen(DISPLAY_BLACK);
-  printf("Running PONG.\n");
 }
 
-void tick20ms() {
+// tick all
+void tickAll() {
   gameControl_tick();
-}
-
-void tick100ms() {
   pongControl_tick();
 }
 
 // All programs share the same main.
 // Differences are limited to test_init() and isr_function().
 int main() {
+  printf("Running PONG.\n");
+  printf("======================\n\n");
   initAll(); // Program specific.
   // Init all interrupts (but does not enable the interrupts at the devices).
   // Prints an error message if an internal failure occurs because the argument
@@ -60,16 +61,13 @@ int main() {
   
   // Enable interrupts at the ARM.
   interrupts_enableArmInts();
-  while (1) {
+  while (true) {
     if (interrupts_isrFlagGlobal) {
       // Count ticks.
       personalInterruptCount++;
-      tick20ms();
+      tickAll();
       interrupts_isrFlagGlobal = 0;
 
-      if (personalInterruptCount % INTERRUPTS_IN_PONG_TICK == 0) {
-        tick100ms();
-      }
       if (personalInterruptCount >= MAX_INTERRUPT_COUNT)
         break;
       utils_sleep();
@@ -77,7 +75,8 @@ int main() {
   }
 
   interrupts_disableArmInts();
-  printf("Terminating PONG.\n");
+  printf("\n\n======================\n");
+  printf("Terminating PONG.\n\n");
   printf("isr invocation count: %d\n", interrupts_isrInvocationCount());
   printf("internal interrupt count: %d\n", personalInterruptCount);
   return 0;

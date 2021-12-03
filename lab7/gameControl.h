@@ -1,11 +1,17 @@
 // Created by Benjamin Duncan - Dec 2, 2021
 
-#ifndef GAME_CONTROL_H
-#define GAME_CONTROL_H
+#ifndef GAMECONTROL_H
+#define GAMECONTROL_H
 
+// inits the game state function
 void gameControl_init();
+// ticks the game state function
 void gameControl_tick();
+// sets the enabled flag high
 void gameControl_enable();
+// sets the enabled flag low
 void gameControl_disable();
+// returns if the state machine is complete
+bool gameControl_isComplete();
 
-#endif /* GAME_CONTROL_H */
+#endif /* GAMECONTROL_H */

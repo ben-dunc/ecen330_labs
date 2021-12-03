@@ -1,17 +1,17 @@
 // Created by Benjamin Duncan - Dec 2, 2021
 
+#include <stdint.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "gameControl.h"
 
 // global variables
 bool isComplete = false;
 bool isEnabled = false;
 
-// functions
-
 // inits the game state function
 void gameControl_init() {
-
+    
 }
 
 // ticks the game state function

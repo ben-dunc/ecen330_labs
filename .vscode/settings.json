@@ -11,7 +11,8 @@
         "xparameters.h": "c",
         "tictactoecontrol.h": "c",
         "stdint.h": "c",
-        "simondisplay.h": "c"
+        "simondisplay.h": "c",
+        "simoncontrol.h": "c"
     },
     "cmake.configureOnOpen": false
 }

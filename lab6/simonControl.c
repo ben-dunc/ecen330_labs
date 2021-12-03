@@ -45,10 +45,11 @@
 #define HALF_HEIGHT DISPLAY_HEIGHT / 2
 #define HALF 2
 
-bool sc_enabled;
-uint32_t sequenceLength;
-uint32_t iterationLength;
-uint32_t sc_counter;
+static bool sc_enabled;
+static uint32_t sequenceLength;
+static uint32_t iterationLength;
+static uint32_t sc_counter;
+static bool releaseOnTimout = false;
 
 // enuming!
 enum sc_st_t { init_st, main_st, flash_st, verify_st, game_over_st };
@@ -255,9 +256,22 @@ void simonControl_tick() {
       // 1), clear screen, draw gameover text, disable verify, transition to
       // game over
     } else if (verifySequence_isComplete()) {
-      simonDisplay_eraseAllButtons();
+      // decrement iterationLength if loose
+      if (verifySequence_isTimeOutError() ||
+          verifySequence_isUserInputError()) {
+        iterationLength--;
+      }
+
+      // check if there is a square to erase too
+      if (display_isTouched()) {
+        display_fillScreen(DISPLAY_BLACK);
+      } else {
+        simonDisplay_eraseAllButtons();
+      }
+
       simonControl_drawGameOverScreen();
       display_clearOldTouchData();
+      releaseOnTimout = false;
       curState = game_over_st;
     }
     break;
@@ -267,9 +281,14 @@ void simonControl_tick() {
       simonControl_init();
     }
 
+    if (!display_isTouched()) {
+      releaseOnTimout = true;
+    }
+
     // if touch && correct, disable verify, increment length, clear screen,
     // transition to flash
-    if (display_isTouched() && !verifySequence_isTimeOutError() &&
+    if (releaseOnTimout && display_isTouched() &&
+        !verifySequence_isTimeOutError() &&
         !verifySequence_isUserInputError()) {
       verifySequence_disable();
       simonControl_setSequenceLength(++sequenceLength);
@@ -279,8 +298,9 @@ void simonControl_tick() {
       curState = flash_st;
       // if touch && incorrect, disable verify set length to four, clear screen,
       // enable flash && transition to flash
-    } else if (display_isTouched() && (verifySequence_isTimeOutError() ||
-                                       verifySequence_isUserInputError())) {
+    } else if (releaseOnTimout && display_isTouched() &&
+               (verifySequence_isTimeOutError() ||
+                verifySequence_isUserInputError())) {
       verifySequence_disable();
       sequenceLength = DEFAULT_SEQUENCE_LENGTH;
       simonControl_setSequenceLength(sequenceLength);

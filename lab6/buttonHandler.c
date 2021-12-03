@@ -11,11 +11,11 @@
 #define SHOW_DEBUG false
 
 // global variables
-bool bh_enabled = false;
-bool bh_complete = false;
-bool bh_releaseDetected = false;
-bool bh_timeoutOccured = false;
-uint8_t bh_regionNumber = 0;
+static bool bh_enabled = false;
+static bool bh_complete = false;
+static bool bh_releaseDetected = false;
+static bool bh_timeoutOccured = false;
+static uint8_t bh_regionNumber = 0;
 // enuming!
 enum bh_st_t {
   init_st,
@@ -69,24 +69,24 @@ void buttonHandler_printStateString() {
 
     // output thingy
     switch (curState) {
-      case init_st:
-        printf("init_st\n");
-        break;
-      case wait_touch_st:
-        printf("wait_touch_st\n");
-        break;
-      case wait_values_st:
-        printf("wait_values_st\n");
-        break;
-      case wait_release_st:
-        printf("wait_release_st\n");
-        break;
-      case complete_st:
-        printf("complete_st\n");
-        break;
-      default:
-        printf("ERROR!!! UNACCEPTABLE STATE IN buttonHandler debug state!\n");
-        break;
+    case init_st:
+      printf("init_st\n");
+      break;
+    case wait_touch_st:
+      printf("wait_touch_st\n");
+      break;
+    case wait_values_st:
+      printf("wait_values_st\n");
+      break;
+    case wait_release_st:
+      printf("wait_release_st\n");
+      break;
+    case complete_st:
+      printf("complete_st\n");
+      break;
+    default:
+      printf("ERROR!!! UNACCEPTABLE STATE IN buttonHandler debug state!\n");
+      break;
     }
   }
 
@@ -141,8 +141,6 @@ void buttonHandler_tick() {
     if (!bh_enabled) {
       curState = init_st;
       buttonHandler_init();
-      simonDisplay_drawSquare(bh_regionNumber, SIMON_DISPLAY_ERASE);
-      simonDisplay_drawButton(bh_regionNumber, SIMON_DISPLAY_DRAW);
     }
 
     // if released, go to complete

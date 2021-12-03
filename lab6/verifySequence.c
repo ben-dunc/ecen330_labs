@@ -11,14 +11,14 @@
 
 #define TIMEOUT_COUNTER_LIMIT 50
 #define SHOW_DEBUG false
-#define MINUS_ONE - 1
+#define MINUS_ONE -1
 
-bool vs_enabled;
-bool vs_complete;
-bool vs_timeOut;
-bool vs_inputError;
-uint32_t vs_counter;
-uint8_t vs_userInput;
+static bool vs_enabled;
+static bool vs_complete;
+static bool vs_timeOut;
+static bool vs_inputError;
+static uint32_t vs_counter;
+static uint8_t vs_userInput;
 
 static uint16_t index;
 
@@ -82,7 +82,9 @@ void verifySequence_init() {
   vs_complete = false;
   vs_inputError = false;
   vs_timeOut = false;
+  vs_counter = 0;
   index = 0;
+  buttonHandler_disable();
 }
 
 // Standard tick function.
@@ -113,6 +115,7 @@ void verifySequence_tick() {
     if (vs_counter >= TIMEOUT_COUNTER_LIMIT) {
       vs_timeOut = true;
       vs_complete = true;
+      vs_counter = 0;
       curState = complete_st;
       // if button completed, get values, disable button, and transition
     } else if (buttonHandler_isComplete()) {

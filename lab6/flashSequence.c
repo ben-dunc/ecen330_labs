@@ -9,10 +9,10 @@
 
 #define FLASH_COUNTER_LIMIT 4
 #define ERASE_COUNTER_LIMIT 2
-#define MINUS_ONE - 1
+#define MINUS_ONE -1
 
-bool fs_enabled = false;
-bool fs_complete = false;
+static bool fs_enabled = false;
+static bool fs_complete = false;
 static uint16_t index;
 
 // enuming!

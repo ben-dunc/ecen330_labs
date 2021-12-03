@@ -22,7 +22,8 @@
 
 // computing
 int8_t simonDisplay_computeRegionNumber(int16_t x, int16_t y) {
-  return (x < HALF_WIDTH ? SIMON_DISPLAY_REGION_0 : SIMON_DISPLAY_REGION_1) + (y < HALF_HEIGHT ? SIMON_DISPLAY_REGION_0 : SIMON_DISPLAY_REGION_2);
+  return (x < HALF_WIDTH ? SIMON_DISPLAY_REGION_0 : SIMON_DISPLAY_REGION_1) +
+         (y < HALF_HEIGHT ? SIMON_DISPLAY_REGION_0 : SIMON_DISPLAY_REGION_2);
 }
 
 // Draws a colored "button" that the user can touch.

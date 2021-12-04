@@ -28,7 +28,7 @@ void pongControl_renderStartScreen() {
     display_setCursor(0, 0);
     display_setTextSize(3);
     display_setTextColor(DISPLAY_WHITE);
-    display_println("hello! This is the start screen.");
+    display_println("PONG");
 }
 
 // renders gameover screen
@@ -36,8 +36,8 @@ void pongControl_renderGameOverScreen() {
     display_fillScreen(DISPLAY_BLACK);
     display_setCursor(0, 0);
     display_setTextSize(3);
-    display_setTextColor(DISPLAY_GREEN);
-    display_println("good bye! This is the gameover screen.");
+    display_setTextColor(DISPLAY_WHITE);
+    display_println("GAMEOVER");
 }
 
 
@@ -97,10 +97,10 @@ void pongControl_tick() {
             break;
         case start_st:
             // go to init if disabled
+            display_clearOldTouchData();
             if (!isEnabled) {
                 pongControl_init();
             } else if (display_isTouched()) {
-                display_clearOldTouchData();
                 curState = get_diff_st;
             }
             break;
@@ -108,11 +108,11 @@ void pongControl_tick() {
             // go to init if disabled
             if (!isEnabled) {
                 pongControl_init();
-            } else if (display_isTouched()) {
-                // get diff values
-                curState = game_st;
             } else {
-                curState = start_st;
+                // get diff values
+                display_fillScreen(DISPLAY_BLACK);
+                gameControl_enable();
+                curState = game_st;
             }
             break;
         case game_st:
@@ -120,8 +120,9 @@ void pongControl_tick() {
             if (!isEnabled) {
                 pongControl_init();
             } else if (gameControl_isComplete()) {
-                curState = gameOver_st;
+                gameControl_disable();
                 pongControl_renderGameOverScreen();
+                curState = gameOver_st;
             }
             break;
         case gameOver_st:
@@ -134,7 +135,6 @@ void pongControl_tick() {
             printf("ERROR!!! Unacceptable state in pongController transfer state!\n");
             break;
     }
-
 
     // action switch
     switch (curState) {

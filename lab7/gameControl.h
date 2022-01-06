@@ -3,6 +3,8 @@
 #ifndef GAMECONTROL_H
 #define GAMECONTROL_H
 
+#include <stdbool.h>
+
 // inits the game state function
 void gameControl_init();
 // ticks the game state function

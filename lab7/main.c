@@ -1,10 +1,11 @@
 // Created by Benjamin Duncan - Dec 2, 2021
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <xparameters.h>
 
+#include "buttons.h"
 #include "config.h"
 #include "display.h"
 #include "interrupts.h"
@@ -22,12 +23,14 @@
 #define INTERRUPTS_PER_SECOND (1.0 / CONFIG_TIMER_PERIOD)
 #define INTERRUPTS_IN_PONG_TICK 5
 
-#define TOTAL_SECONDS 120
+#define TOTAL_SECONDS 600
 #define MAX_INTERRUPT_COUNT (INTERRUPTS_PER_SECOND * TOTAL_SECONDS)
 
+// init thingies
 void initAll() {
   gameControl_init();
   pongControl_init();
+  buttons_init();
 
   pongControl_enable();
 
@@ -58,18 +61,17 @@ int main() {
   int32_t personalInterruptCount = 0;
   // Start the private ARM timer running.
   interrupts_startArmPrivateTimer();
-  
+
   // Enable interrupts at the ARM.
   interrupts_enableArmInts();
+  // repeat!
   while (true) {
+    // tick
     if (interrupts_isrFlagGlobal) {
       // Count ticks.
       personalInterruptCount++;
       tickAll();
       interrupts_isrFlagGlobal = 0;
-
-      if (personalInterruptCount >= MAX_INTERRUPT_COUNT)
-        break;
       utils_sleep();
     }
   }

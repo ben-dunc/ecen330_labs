@@ -3,13 +3,7 @@
 #ifndef PONGCONTROL_H
 #define PONGCONTROL_H
 
-/*
-    To do:
-    1. DONE! Create init and tick functions
-    2. Create screen state machine skeleton
-    3. Determine how big each "pixel" is going to be
-    3. Create start screen and gameover screen
-*/
+#include <stdbool.h>
 
 // inits the pong control state machine
 void pongControl_init();

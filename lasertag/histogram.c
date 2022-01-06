@@ -149,20 +149,20 @@ bool histogram_setBarData(histogram_index_t barIndex, histogram_data_t data,
                           const char barTopLabel[]) {
   if (!initFlag) {
     printf("Error! histogram_setBarData(): must call histogram_init() before "
-           "calling this function.\n\r");
+           "calling this function.\n");
     return false;
   }
   // Error checking.
   if (barIndex > histogram_barCount) {
     printf("Error! histogram_setBarData(): barIndex(%d) is greater than "
-           "maximum (%d)\n\r",
+           "maximum (%d)\n",
            barIndex, histogram_barCount - 1);
     return false;
   }
   // Error checking.
   if (data > HISTOGRAM_MAX_BAR_DATA_IN_PIXELS) {
     printf("Error! histogram_setBarData(): data (%d) is greater than maximum "
-           "(%d) for index(%d) \n\r",
+           "(%d) for index(%d)\n",
            data, HISTOGRAM_MAX_BAR_DATA_IN_PIXELS - 1, barIndex);
     return false;
   }
@@ -240,7 +240,7 @@ void histogram_drawTopLabel(uint16_t barIndex, histogram_data_t data,
 void histogram_updateDisplay() {
   if (!initFlag) {
     printf("Error! histogram_displayUpdate(): must call histogram_init() "
-           "before calling this function.\n\r");
+           "before calling this function.\n");
     return;
   }
   for (int i = 0; i < histogram_barCount; i++) {
@@ -288,7 +288,7 @@ void histogram_updateDisplay() {
 // histogram_init() to restore the defaults.
 void histogram_setBarColor(histogram_index_t barIndex, uint16_t color) {
   if (barIndex < 0 || barIndex > HISTOGRAM_MAX_BAR_COUNT) {
-    printf("Error!!! histogram_setBarColor: barIndex(%d) not in range.\n\r",
+    printf("Error!!! histogram_setBarColor: barIndex(%d) not in range.\n",
            barIndex);
     return;
   }
@@ -299,7 +299,7 @@ void histogram_setBarColor(histogram_index_t barIndex, uint16_t color) {
 // histogram_init() to restore the defaults.
 void histogram_setBarLabel(histogram_index_t barIndex, const char *label) {
   if (barIndex < 0 || barIndex > HISTOGRAM_MAX_BAR_COUNT) {
-    printf("Error!!! histogram_setBarColor: barIndex(%d) not in range.\n\r",
+    printf("Error!!! histogram_setBarColor: barIndex(%d) not in range.\n",
            barIndex);
     return;
   }
@@ -385,7 +385,7 @@ void histogram_plotUserFrequencyPower(double powerValues[]) {
     // Create the label, based upon the actual power value.
     if (snprintf(label, HISTOGRAM_BAR_TOP_MAX_LABEL_WIDTH_IN_CHARS, "%0.0e",
                  powerValues[i]) == -1)
-      printf("Error: snprintf encountered an error during conversion.\n\r");
+      printf("Error: snprintf encountered an error during conversion.\n");
     // Pull out the 'e' from the exponent to make better use of your characters.
     trimLabel(label);
     // Have the bar value and the label, send the data to the histogram.
@@ -393,15 +393,15 @@ void histogram_plotUserFrequencyPower(double powerValues[]) {
       // If returns false, histogram_setBarData() is not happy. Print out some
       // information.
       printf("Error:histogram_setBarData() histogramBarValue(%d) out of "
-             "range.\n\r",
+             "range.\n",
              histogramBarValue);
-      printf("Provided normalizedPowerValue[%d]:%lf\n\r", i,
+      printf("Provided normalizedPowerValue[%d]:%lf\n", i,
              normalizedPowerValues[i]);
-      printf("Dumping current and normalized power values.\n\r");
+      printf("Dumping current and normalized power values.\n");
       for (int tmp_i = 0; tmp_i < FILTER_FREQUENCY_COUNT; tmp_i++) {
-        printf("currentPowerValue[%d]:%lf\n\r", tmp_i,
+        printf("currentPowerValue[%d]:%lf\n", tmp_i,
                filter_getCurrentPowerValue(tmp_i));
-        printf("normalizedPowerValue[%d]:%lf\n\r", tmp_i,
+        printf("normalizedPowerValue[%d]:%lf\n", tmp_i,
                normalizedPowerValues[tmp_i]);
       }
     }
@@ -438,7 +438,7 @@ void histogram_plotUserHits(uint16_t hitCounts[]) {
     // Create the label, based upon the actual power value.
     if (snprintf(label, HISTOGRAM_BAR_TOP_MAX_LABEL_WIDTH_IN_CHARS, "%d",
                  hitCounts[i]) == -1)
-      printf("Error: snprintf encountered an error during conversion.\n\r");
+      printf("Error: snprintf encountered an error during conversion.\n");
     histogram_setBarData(
         i, normalizedHitValues[i] * HISTOGRAM_MAX_BAR_DATA_IN_PIXELS, label);
     histogram_updateDisplay(); // Redraw the histogram.

@@ -10,7 +10,6 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 #ifndef AUTORELOADTIMER_H_
 #define AUTORELOADTIMER_H_
 
-#include "globalDefines.h"
 #include <stdbool.h>
 
 // The auto-reload timer is always looking at the remaining shot-count from the
@@ -19,12 +18,11 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 
 #ifndef AUTO_RELOAD_EXPIRE_VALUE
 // Default, Defined in terms of 100 kHz ticks.
-// Can be changed in the globalDefines.h file.
 #define AUTO_RELOAD_EXPIRE_VALUE 300000
 #endif
 
 #ifndef AUTO_RELOAD_SHOT_VALUE
-#define AUTO_RELOAD_SHOT_VALUE 10 // Default, can be changed in globalDefines.h
+#define AUTO_RELOAD_SHOT_VALUE 10 // Default
 #endif
 
 // Need to init things.
@@ -36,7 +34,7 @@ void autoReloadTimer_start();
 // Returns true if the timer is currently running.
 bool autoReloadTimer_running();
 
-// Disables the autoReloadTimer and reinitializes it.
+// Disables the autoReloadTimer and re-initializes it.
 void autoReloadTimer_cancel();
 
 // Standard tick function.

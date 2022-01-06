@@ -169,7 +169,7 @@ def get_files_to_copy_and_zip(lab):
         files.append((lasertag_path / "lockoutTimer.c", None, True))
         files.append((lasertag_path / "isr.c", None, True))
     elif lab == "390m5":
-        files.append((lasertag_path / "gameModes.c", None, True))
+        files.append((lasertag_path / "runningModes2.c", None, True))
 
     if lab.startswith("390"):
         print(

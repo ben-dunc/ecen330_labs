@@ -117,7 +117,7 @@ int bluetooth_init() {
       XUartLite_CfgInitialize(&bluetooth_uartInstance, &bluetooth_uartConfig,
                               XPAR_BLUETOOTH_UARTLITE_0_BASEADDR);
   if (status != XST_SUCCESS) {
-    printf("bluetooth_init(): Unable to initialize bluetooth UART\n\r.");
+    printf("bluetooth_init(): Unable to initialize bluetooth UART\n.");
     return BLUETOOTH_INIT_STATUS_FAIL;
   }
   return BLUETOOTH_INIT_STATUS_OK;
@@ -188,7 +188,7 @@ void bluetooth_poll() {
   // Transfer whatever you read to the receive queue.
   uint16_t bytesRead = bluetooth_uartRead(readData, requestedReadCount);
   //    if (bytesRead != 0)
-  //        printf("received %d bytes.\n\r", bytesRead);
+  //        printf("received %d bytes.\n", bytesRead);
   for (uint16_t i = 0; i < bytesRead; i++) {
     bluetooth_queuePush(&bluetooth_receiveQueue, readData[i]);
   }

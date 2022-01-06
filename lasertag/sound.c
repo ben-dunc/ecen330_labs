@@ -133,13 +133,13 @@ void debugStatePrint() {
     switch (currentState) { // This prints messages based upon the state that
                             // you were in.
     case sound_init_st:
-      printf("sound_init_st\n\r");
+      printf("sound_init_st\n");
       break;
     case sound_wait_st:
-      printf("sound_wait_st\n\r");
+      printf("sound_wait_st\n");
       break;
     case sound_play_st:
-      printf("sound_play_st\n\r");
+      printf("sound_play_st\n");
       break;
     }
   }
@@ -282,7 +282,7 @@ void sound_playSound(sound_sounds_t sound) {
 // To invoke, just place this in your main.
 // Completely stand alone, doesn't require interrupts, etc.
 void sound_runTest() {
-  printf("****************** sound_runTest() ****************** \n");
+  printf("****************** sound_runTest() ******************\n");
 
   sound_init();
   sound_tick();
@@ -374,7 +374,7 @@ int AudioRegSet(XIicPs *IIcPtr, u8 regAddr, u16 regData) {
   Status = XIicPs_MasterSendPolled(IIcPtr, SendBuffer, 2, IIC_SLAVE_ADDR);
   // Always check for success.
   if (Status != XST_SUCCESS) {
-    printf("IIC send failed\n\r");
+    printf("IIC send failed\n");
     return XST_FAILURE;
   }
   // This function blocks until the IIC is idle.

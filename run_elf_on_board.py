@@ -9,7 +9,7 @@ import shutil
 import pathlib
 
 VITIS_BIN = "/opt/Xilinx/Vitis/2019.2/bin/vitis"
-XSCT_BIN_WINDOWS = "C:/Xilinx/Vitis/2019.2/bin/xsct"
+XSCT_BIN_WINDOWS = "C:/Xilinx/Vitis/2020.2/bin/xsct"
 
 LABS_DIR = pathlib.Path(__file__).resolve().parent
 

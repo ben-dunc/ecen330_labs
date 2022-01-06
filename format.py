@@ -20,6 +20,7 @@ dirs_to_exclude = [
     "old_digilent_files_solns",
     "student",
     "student_repo",
+    "instructor/code_obfuscation",
 ]
 
 

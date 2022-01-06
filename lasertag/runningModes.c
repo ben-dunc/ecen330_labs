@@ -10,8 +10,8 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 #include "runningModes.h"
 #include "detector.h"
 #include "display.h"
-#include "drivers/buttons.h"
-#include "drivers/switches.h"
+#include "buttons.h"
+#include "switches.h"
 #include "filter.h"
 #include "histogram.h"
 #include "hitLedTimer.h"
@@ -85,9 +85,9 @@ static uint32_t detectorInvocationCount = 0;
 
 // Prints out various run-time statistics on the TFT display.
 // Assumes the following:
-// main is keeping track of detected interrupts with
-// countInterruptsViaInterruptsIsrFlag, interval_timer(0) is the cumulative
-// run-time of the ISR, interval_timer(1) is the total run-time,
+// detected interrupts is retrieved with interrupts_isrInvocationCount(),
+// interval_timer(0) is the cumulative run-time of the ISR,
+// interval_timer(1) is the total run-time,
 // interval_timer(2) is the time spent in main running the filters, updating the
 // display, and so forth. No comments in the code, the print statements are
 // self-explanatory.
@@ -185,6 +185,7 @@ void runningModes_initAll() {
   hitLedTimer_init();
   trigger_init();
   lockoutTimer_init();
+  sound_init();
 }
 
 // Returns the current switch-setting
@@ -208,12 +209,11 @@ void runningModes_continuous() {
   for (uint16_t i = 0; i < FILTER_FREQUENCY_COUNT; i++)
     ignoredFrequenciesArray[i] = false;
 #ifdef IGNORE_OWN_FREQUENCY
-  printf("Ignoring own frequency.\n\r");
+  printf("Ignoring own frequency.\n");
   ignoredFrequenciesArray[runningModes_getFrequencySetting()] = true;
 #endif
   detector_init(ignoredFrequenciesArray);
 
-  // sound_init();
   // Prints an error message if an internal failure occurs because the argument
   // = true.
   interrupts_initAll(true); // Init all interrupts (but does not enable the
@@ -271,13 +271,12 @@ void runningModes_shooter() {
   for (uint16_t i = 0; i < FILTER_FREQUENCY_COUNT; i++)
     ignoredFrequencies[i] = false;
 #ifdef IGNORE_OWN_FREQUENCY
-  printf("Ignoring own frequency.\n\r");
+  printf("Ignoring own frequency.\n");
   ignoredFrequencies[runningModes_getFrequencySetting()] = true;
 #endif
   detector_init(ignoredFrequencies);
   uint16_t hitCount = 0;
   detectorInvocationCount = 0; // Keep track of detector invocations.
-  sound_init();
   trigger_enable();         // Makes the trigger state machine responsive to the
                             // trigger.
   interrupts_initAll(true); // Inits all interrupts but does not enable them.
@@ -325,7 +324,7 @@ void runningModes_shooter() {
   hitLedTimer_turnLedOff();    // Save power :-)
   runningModes_printRunTimeStatistics(); // Print the run-time statistics to the
                                          // TFT.
-  printf("Shooter mode terminated after detecting %d shots.\n\r", hitCount);
+  printf("Shooter mode terminated after detecting %d shots.\n", hitCount);
 }
 
 // This mode simply dumps raw ADC values to the console.

@@ -66,7 +66,7 @@ static uint16_t tickCount = 0;
 #define BLUETOOTH_SERVICE_INTERVAL 5
 
 void isr_function() {
-  //    printf("#\n\r");
+  //    printf("#\n");
   tickCount++;
   if (tickCount > BLUETOOTH_SERVICE_INTERVAL) {
     bluetooth_poll();
@@ -89,13 +89,13 @@ void isr_function() {
 
 // int main() {
 //  Adafruit_BluefruitLE_UART ble;
-//  printf("Bluetooth Test Program\n\r");
+//  printf("Bluetooth Test Program\n");
 ////  ble.info();
 ////  utils_msDelay(100);
 //  char deviceName[BUFSIZE];
 ////  printf("Advertised Name: ");
 //  ble.getGapDeviceName(deviceName, BUFSIZE);
-//  printf("Advertised Name: %s\n\r", deviceName);
+//  printf("Advertised Name: %s\n", deviceName);
 ////  ble.setGapDeviceName("blahblahblah");
 //  // Display command prompt
 //  bool printResult = true;

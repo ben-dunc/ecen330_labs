@@ -342,7 +342,7 @@ uint16_t computeAdcBufferInput(uint16_t freqTick,
 void filterTest_runSquareWaveFirPowerTest(bool printMessageFlag,
                                           bool plotInputFlag) {
   if (!filterTest_initFlag) {
-    printf("Must call filterTest_init() before running any filter tests.\n\r");
+    printf("Must call filterTest_init() before running any filter tests.\n");
     return;
   }
   double firPower = 0.0; // Power will be accumulated here.
@@ -356,7 +356,7 @@ void filterTest_runSquareWaveFirPowerTest(bool printMessageFlag,
     printf(
         "running filter_runFirPowerTest() - plotting power values (frequency "
         "response) for frequencies %1.2lf kHz to %1.2lf kHz for FIR filter to "
-        "TFT display.\n\r",
+        "TFT display.\n",
         ((double)((FILTER_SAMPLE_FREQUENCY_IN_KHZ)) /
          filterTest_firTestTickCounts[0]),
         ((double)((FILTER_SAMPLE_FREQUENCY_IN_KHZ)) /
@@ -424,7 +424,7 @@ void filterTest_runSquareWaveFirPowerTest(bool printMessageFlag,
       }
     }
     if (plotInputFlag) { // Only plot the data if the flag is true.
-      printf("plotting input square wave.\n\r");
+      printf("plotting input square wave.\n");
       filterTest_plotInputValues(xValues, yValues,
                                  currentPeriodTickCount * PERIODS_TO_PLOT);
       utils_msDelay(INPUT_PLOT_VIEW_DELAY);
@@ -444,12 +444,12 @@ void filterTest_runSquareWaveFirPowerTest(bool printMessageFlag,
 #endif
     testPeriodPowerValue[testPeriodIndex] =
         firPower; // Store the resulting power.
-    printf("freqCount:%d, testPeriodPowerValue:%le\n\r", freqCount,
+    printf("freqCount:%d, testPeriodPowerValue:%le\n", freqCount,
            testPeriodPowerValue[testPeriodIndex]); // Info. print.
     freqCount++;
   }
   // After running all of the data through the filters, plot it out.
-  printf("Plotting response to square-wave input.\n\r");
+  printf("Plotting response to square-wave input.\n");
   filterTest_plotFirFrequencyResponse(testPeriodPowerValue);
 }
 
@@ -491,7 +491,7 @@ void filterTest_plotIirFrequencyResponse(double iirPowerValues[],
     // to round the number instead of truncate.
     if (snprintf(label, HISTOGRAM_BAR_TOP_MAX_LABEL_WIDTH_IN_CHARS, "%0.0e",
                  floor(iirPowerValues[barIndex]) + ONE_HALF_FP(1.0)) == -1)
-      printf("Error: snprintf encountered an error during conversion.\n\r");
+      printf("Error: snprintf encountered an error during conversion.\n");
     // Pull out the 'e' from the exponent to make better use of your characters.
     trimLabel(label);
     histogram_setBarData(barIndex,
@@ -520,7 +520,7 @@ void filterTest_fillQueue(queue_t *q, double fillValue) {
 void filterTest_runSquareWaveIirPowerTest(uint16_t filterNumber,
                                           bool printMessageFlag) {
   if (!filterTest_initFlag) {
-    printf("Must call filterTest_init() before running any filter tests.\n\r");
+    printf("Must call filterTest_init() before running any filter tests.\n");
     return;
   }
 #ifdef ADC_THROUGH_DETECTOR_FILTER_TEST
@@ -529,7 +529,7 @@ void filterTest_runSquareWaveIirPowerTest(uint16_t filterNumber,
 #endif
   if (printMessageFlag) {
     printf("running filter_runFirPowerTest(%d) - plotting power for all player "
-           "frequencies for IIR filter(%d) to TFT display.\n\r",
+           "frequencies for IIR filter(%d) to TFT display.\n",
            filterNumber, filterNumber);
   }
   double testPeriodPowerValue
@@ -608,7 +608,7 @@ void filterTest_runSquareWaveIirPowerTest(uint16_t filterNumber,
 // the impulse response.
 bool filterTest_runFirAlignmentTest(bool printMessageFlag) {
   if (!filterTest_initFlag) {
-    printf("Must call filterTest_init() before running any filter tests.\n\r");
+    printf("Must call filterTest_init() before running any filter tests.\n");
     return false;
   }
   bool success = true;                           // Be optimistic.
@@ -626,7 +626,7 @@ bool filterTest_runFirAlignmentTest(bool printMessageFlag) {
                                 // match the golden value, print an error.
       success = false;          // The test failed.
       printf("filter_runAlignmentTest: Output from FIR Filter(%20.24le) does "
-             "not match test-data(%20.24le).\n\r",
+             "not match test-data(%20.24le).\n",
              firValue, firGoldenOutput);
     }
     filter_addNewInput(
@@ -636,9 +636,9 @@ bool filterTest_runFirAlignmentTest(bool printMessageFlag) {
   if (printMessageFlag) {
     printf("filter_runFirAlignmentTest ");
     if (success)
-      printf("passed.\n\r");
+      printf("passed.\n");
     else
-      printf("failed.\n\r");
+      printf("failed.\n");
   }
   return success; // Return the success of failure of this test.
 }
@@ -648,7 +648,7 @@ bool filterTest_runFirAlignmentTest(bool printMessageFlag) {
 // outputs correctly if you pass this test.
 bool filterTest_runFirArithmeticTest(bool printMessageFlag) {
   if (!filterTest_initFlag) {
-    printf("Must call filterTest_init() before running any filter tests.\n\r");
+    printf("Must call filterTest_init() before running any filter tests.\n");
     return false;
   }
   bool success = true;                       // Be optimistic.
@@ -672,7 +672,7 @@ bool filterTest_runFirArithmeticTest(bool printMessageFlag) {
                                 // note failure.
       success = false;          // Test failed.
       printf("filter_runArithmeticTest: Output from FIR Filter(%24.20le) does "
-             "not match test-data(%24.20le) at index(%d).\n\r",
+             "not match test-data(%24.20le) at index(%d).\n",
              firValue, firGoldenOutput, i);
     }
   }
@@ -680,11 +680,11 @@ bool filterTest_runFirArithmeticTest(bool printMessageFlag) {
   if (printMessageFlag) {
     printf("filter_runFirArithmeticTest ");
     if (success)
-      printf("passed.\n\r");
+      printf("passed.\n");
     else {
-      printf("failed.\n\r");
+      printf("failed.\n");
       printf("Ensure that your FIR coefficients have at least 20 significant "
-             "digits.\n\r");
+             "digits.\n");
     }
   }
   return success; // Return the success or failure of the test.
@@ -697,7 +697,7 @@ bool filterTest_runFirArithmeticTest(bool printMessageFlag) {
 bool filterTest_runIirBAlignmentTest(uint16_t filterNumber,
                                      bool printMessageFlag) {
   if (!filterTest_initFlag) {
-    printf("Must call filterTest_init() before running any filter tests.\n\r");
+    printf("Must call filterTest_init() before running any filter tests.\n");
     return false;
   }
   bool success = true;                       // Be optimistic.
@@ -715,7 +715,7 @@ bool filterTest_runIirBAlignmentTest(uint16_t filterNumber,
                                           // the golden output.
       success = false; // Note test failure and print message.
       printf("filter_runIirBlignmentTest: Output from IIR Filter[%d](%24.20le) "
-             "does not match test-data(%24.20le) at index(%d).\n\r",
+             "does not match test-data(%24.20le) at index(%d).\n",
              filterNumber, iirValue, iirGoldenOutput, i);
     }
     filter_fillQueue(filter_getZQueue(filterNumber),
@@ -728,9 +728,9 @@ bool filterTest_runIirBAlignmentTest(uint16_t filterNumber,
   if (printMessageFlag) {
     printf("filter_runIirBAlignmentTest ");
     if (success)
-      printf("passed.\n\r");
+      printf("passed.\n");
     else
-      printf("failed.\n\r");
+      printf("failed.\n");
   }
   return success; // Return the success or failure of the test.
 }
@@ -753,7 +753,7 @@ uint16_t filterTest_getIirACoefficientArrayStartingIndex() {
 bool filterTest_runIirAAlignmentTest(uint16_t filterNumber,
                                      bool printMessageFlag) {
   if (!filterTest_initFlag) {
-    printf("Must call filterTest_init() before running any filter tests.\n\r");
+    printf("Must call filterTest_init() before running any filter tests.\n");
     return false;
   }
   bool success = true; // Be optimistic.
@@ -786,7 +786,7 @@ bool filterTest_runIirAAlignmentTest(uint16_t filterNumber,
           false; // Note the failure of the test and print an info message.
       printf(
           "filter_runIirAAlignmentTest: Output from IIR Filter[%d](%20.24le) "
-          "does not match test-data(%20.24le) at index(%d).\n\r",
+          "does not match test-data(%20.24le) at index(%d).\n",
           filterNumber, iirValue, -iirGoldenOutput, i + startingIndex);
     }
   }
@@ -794,9 +794,9 @@ bool filterTest_runIirAAlignmentTest(uint16_t filterNumber,
   if (printMessageFlag) {
     printf("filter_runIirAAlignmentTest ");
     if (success)
-      printf("passed.\n\r");
+      printf("passed.\n");
     else
-      printf("failed.\n\r");
+      printf("failed.\n");
   }
   return success; // Return the failure or success of the test.
 }
@@ -857,15 +857,14 @@ double filterTest_computeGoldenPowerValue(queue_t *q) {
 //    for all 10 output queues.
 // Tests both forced and incremental modes.
 #define TEST_PASS_EPSILON 10E-11 // Should be in this range.
-#define TEST_INCREMENTAL_LOOP_COUNT                                            \
+#define TEST_INCREMENTAL_LOOP_COUNT \
   3000 // Loop over the incremental test this many times.
 #define OUTPUT_QUEUE_SIZE 2000
 bool filterTest_runPowerTest() {
   bool firstComputeStatus = true; // Be optimistic.
   filter_init();
-  printf("===== Starting filter_runPowerTest() =====\n\r");
-  printf(
-      "Testing to see that the power is computed correctly when forced.\n\r");
+  printf("===== Starting filter_runPowerTest() =====\n");
+  printf("Testing to see that the power is computed correctly when forced.\n");
   // This tests starting from the beginning.
   for (uint16_t i = 0; i < FILTER_FREQUENCY_COUNT; i++) {
     queue_t *q = filter_getIirOutputQueue(i); // Get the output queue.
@@ -881,9 +880,9 @@ bool filterTest_runPowerTest() {
 #endif
     if ((size = queue_size(q)) != (OUTPUT_QUEUE_SIZE + queueSizeOffset)) {
       printf("Output queue for queue number %d is incorrect (%d). It should "
-             "be %d\n\r",
+             "be %d\n",
              i, size, (OUTPUT_QUEUE_SIZE + queueSizeOffset));
-      printf("Fix this problem before proceeding.\n\r");
+      printf("Fix this problem before proceeding.\n");
       return false;
     }
     filterTest_fillQueueWithRandomValues(
@@ -895,19 +894,19 @@ bool filterTest_runPowerTest() {
         i, true, false);            // true, false = no force, no debug print.
     if (testValue != goldenValue) { // Check for errors.
       printf("filter_runPowerTest failed for index: %d: , golden value: %lf, "
-             "filter_computePower(): %lf\n\r",
+             "filter_computePower(): %lf\n",
              i, goldenValue, testValue);
       firstComputeStatus = false; // Keep track of pass/fail.
       break;
     }
   }
   if (firstComputeStatus)
-    printf("Output queues are the correct size.\n\r");
-  printf("Power values were properly computed when forced.\n\r");
+    printf("Output queues are the correct size.\n");
+  printf("Power values were properly computed when forced.\n");
   // Add a single value to each output queue and try again.
   // This tests the incremental computation.
   printf("Testing to see that the power is computed correctly incrementally "
-         "over %d trials.\n\r",
+         "over %d trials.\n",
          TEST_INCREMENTAL_LOOP_COUNT);
   bool incrementalComputeStatus =
       true; // Be optimistic for the incremental computation.
@@ -926,22 +925,22 @@ bool filterTest_runPowerTest() {
       if (fabs(testValue - goldenValue) >
           TEST_PASS_EPSILON) { // See if the value is in error beyond some
                                // epsilon.
-        printf("Loop count:%d\n\r",
+        printf("Loop count:%d\n",
                loopCount); // Print out the current loop count for reference.
         // Print out values that indicates the failure.
-        printf("filter_runPowerTest failed for index: %d\n\rgolden value:      "
-               "    %lf\n\rfilter_computePower(): %20.24lf\n\r",
+        printf("filter_runPowerTest failed for index: %d\ngolden value:      "
+               "    %lf\nfilter_computePower(): %20.24lf\n",
                i, goldenValue, testValue);
         printf("Difference between golden value and incrementally computed "
-               "value: %20.24le\n\r",
+               "value: %20.24le\n",
                fabs(goldenValue - testValue));
         incrementalComputeStatus = false; // Keep track of status.
       }
     }
   }
   if (incrementalComputeStatus) // Print OK message if there were no errors.
-    printf("Power values were properly computed incrementally.\n\r");
-  printf("+++++ Exiting filter_runPowerTest +++++\n\r");
+    printf("Power values were properly computed incrementally.\n");
+  printf("+++++ Exiting filter_runPowerTest +++++\n");
   // Return the combined status for both the first-compute test and the
   // incremental test.
   return firstComputeStatus & incrementalComputeStatus;
@@ -1018,7 +1017,7 @@ bool filterTest_runTest() {
 //    // Tells you that this function is plotting the frequency response for the
 //    FIR filter for a set of frequencies. printf("running
 //    filter_runFirPowerTest() - plotting power values (frequency response) for
-//    frequencies %1.2lf kHz to %1.2lf kHz for FIR filter to TFT display.\n\r",
+//    frequencies %1.2lf kHz to %1.2lf kHz for FIR filter to TFT display.\n",
 //        ((double)
 //        ((FILTER_SAMPLE_FREQUENCY_IN_KHZ))/filterTest_firTestTickCounts[0]),
 //        ((double)
@@ -1068,7 +1067,7 @@ bool filterTest_runTest() {
 //      }
 //    }
 //    if (plotInputFlag) {  // Only plot the input signals if the flag is true.
-//      printf("plotting input sinusoid\n\r");
+//      printf("plotting input sinusoid\n");
 //      filterTest_plotInputValues(xValues, yValues,
 //      currentPeriodTickCount*PERIODS_TO_PLOT);
 //      utils_msDelay(INPUT_PLOT_VIEW_DELAY);
@@ -1085,9 +1084,9 @@ bool filterTest_runTest() {
 //      Square the output.
 //    }
 //    testPeriodPowerValue[testPeriodIndex] = firPower; // Store the resulting
-//    power. printf("freqCount:%d, testPeriodPowerValue:%le\n\r", freqCount,
+//    power. printf("freqCount:%d, testPeriodPowerValue:%le\n", freqCount,
 //    testPeriodPowerValue[testPeriodIndex]); // Info. print. freqCount++;
 //  }
-//  printf("Plotting FIR frequency response to sinusoidal inputs.\n\r");
+//  printf("Plotting FIR frequency response to sinusoidal inputs.\n");
 //  filterTest_plotFirFrequencyResponse(testPeriodPowerValue);
 //}

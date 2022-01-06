@@ -7,28 +7,17 @@ source code for personal or educational use.
 For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 */
 
-// Uncomment the line below to run a comprehensive test of the filters.
-#define FILTER_TEST_RUN // Just run the filter test.
+// Uncomment to run tests, various Milestones
+#define RUNNING_MODE_TESTS
 
-// Uncomment the line below to run the game in Zombie mode..
-//#define ZOMBIE_MODE   // Enable zombie mode with the main for laser tag.
+// Uncomment to run Milestone 3, Task 2
+// #define RUNNING_MODE_M3_T2
 
-//#define TEST_MAIN // Used for general testing.
+// Uncomment to run continuous/shooter mode, Milestone 3, Task 3
+// #define RUNNING_MODE_M3_T3
 
-// Leave uncommented to run the queue test.
-// #define QUEUE_TEST_RUN
-
-// Leave uncommented to run the sound test.
-// #define SOUND_TEST_RUN
-
-// Leave uncommented to simply dump raw ADC values to the console.
-// #define JUST_DUMP_RAW_ADC_VALUES
-
-// Leave uncommented to run two-player mode.
-// #define RUNNING_MODES_TWO_TEAMS
-
-// Leave uncommented to run continuous/shooter mode.
-// #define DEFAULT_RUNNING_MODE
+// Uncomment to run two-player mode, Milestone 5
+// #define RUNNING_MODE_M5
 
 // The following line enables the main() contained in laserTagMain.c
 // Leave this line uncommented unless you want to run some other special test
@@ -37,48 +26,71 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 
 #ifdef LASER_TAG_MAIN
 
-#include "detector.h"
-#include "drivers/buttons.h"
-#include "filter.h"
-#include "filterTest.h"
-#include "gameModes.h"
-#include "runningModes.h"
-#include "sound.h"
 #include <assert.h>
 #include <stdio.h>
 
-// The program comes up in continuous mode.
-// Hold BTN2 while the program starts to come up in shooter mode.
+#include "buttons.h"
+#include "detector.h"
+#include "filter.h"
+#include "filterTest.h"
+#include "hitLedTimer.h"
+#include "interrupts.h"
+#include "isr.h"
+#include "lockoutTimer.h"
+#include "runningModes.h"
+#include "sound.h"
+#include "switches.h"
+#include "transmitter.h"
+#include "trigger.h"
+#include "detector.h"
+
 int main() {
-// Runs a comprehensive filter test if defined.
-#ifdef QUEUE_TEST_RUN
-  queue_runTest();
+
+#ifdef RUNNING_MODE_TESTS
+  queue_runTest(); // M1
+  // filterTest_runTest(); // M3 T1
+  // transmitter_runTest(); // M3 T2
+  // detector_runTest(); // M3 T3
+  // sound_runTest(); // M4
 #endif
 
-#ifdef FILTER_TEST_RUN
-  filterTest_runTest();
+#ifdef RUNNING_MODE_M3_T2
+  buttons_init();
+  switches_init();
+  isr_init();
+
+  interrupts_initAll(true);           // main interrupt init function.
+  interrupts_enableTimerGlobalInts(); // enable global interrupts.
+  interrupts_startArmPrivateTimer();  // start the main timer.
+  interrupts_enableArmInts(); // now the ARM processor can see interrupts.
+
+  transmitter_runNoncontinuousTest();
+  transmitter_runContinuousTest();
+  trigger_runTest();
+  hitLedTimer_runTest();
+  lockoutTimer_runTest();
+  while (1) ; // Forever-while loop. Modify as you see fit.
 #endif
 
-#ifdef SOUND_TEST_RUN
-  sound_runTest();
-#endif
-
-#ifdef RUNNING_MODES_TWO_TEAMS
-  gameModes_twoTeams();
-#endif
-
-#ifdef DEFAULT_RUNNING_MODE
-  // btn2 is pressed, which enables shooter mode.
+#ifdef RUNNING_MODE_M3_T3
+  // The program comes up in continuous mode.
+  // Hold BTN2 while the program starts to come up in shooter mode.
   buttons_init(); // Init the buttons.
-  if (buttons_read() &
-      BUTTONS_BTN2_MASK) { // Read the buttons to see if BTN2 is drepressed.
-    printf("Starting shooter mode\n\r");
+  if (buttons_read() & BUTTONS_BTN2_MASK) { // Read the buttons to see if BTN2 is depressed.
+    printf("Starting shooter mode\n");
     runningModes_shooter(); // Run shooter mode if BTN2 is depressed.
   } else {
-    printf("Starting continuous mode\n\r");
+    printf("Starting continuous mode\n");
     runningModes_continuous(); // Otherwise, go to continuous mode.
   }
 #endif
+
+#ifdef RUNNING_MODE_M5
+  printf("Starting two team mode\n");
+  runningModes_twoTeams();
+#endif
+
+  return 0;
 }
 
 #endif // LASER_TAG_MAIN

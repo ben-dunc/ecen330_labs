@@ -45,10 +45,10 @@ static bool compareChainOfSmallQueuesWithLargeQueue() {
       double largeQElt = queue_readElementAt(
           &largeQueue, (smallQIdx * SMALL_QUEUE_SIZE) + smallQEltIdx);
       if (smallQElt != largeQElt) {
-        printf("not-equal\n\r");
-        printf("largeQ(%d):%lf\n\r",
+        printf("not-equal\n");
+        printf("largeQ(%u):%lf\n",
                (smallQIdx * SMALL_QUEUE_SIZE) + smallQEltIdx, largeQElt);
-        printf("smallQ[%d](%d): %lf\n\r", smallQIdx, smallQEltIdx, smallQElt);
+        printf("smallQ[%u](%u): %lf\n", smallQIdx, smallQEltIdx, smallQElt);
         success = false;
         break;
       }
@@ -80,15 +80,15 @@ int16_t queue_runTest2() {
   for (int i = 0; i < SMALL_QUEUE_SIZE; i++) {
     double qValue = queue_readElementAt(&q, i);
     if (qValue != testData[i + FILLER]) {
-      printf("testData[%d]:%lf != queue_readElementAt(&q, %d):%lf\n\r", i,
+      printf("testData[%d]:%lf != queue_readElementAt(&q, %d):%lf\n", i,
              testData[i + FILLER], i + FILLER, qValue);
       success = false;
     }
   }
   if (!success) {
-    printf("Test 1 failed. Array contents not equal to queue contents.\n\r");
+    printf("Test 1 failed. Array contents not equal to queue contents.\n");
   } else {
-    printf("Test 1 passed. Array contents match queue contents.\n\r");
+    printf("Test 1 passed. Array contents match queue contents.\n");
   }
   success = true; // Remain optimistic.
   // Test 2: test a chain of 5 queues against a single large queue that is the
@@ -117,10 +117,10 @@ int16_t queue_runTest2() {
   }
   if (success)
     printf("Test 2 passed. Small chain of queues behaves identical to single "
-           "large queue.\n\r");
+           "large queue.\n");
   else
     printf("Test 2 failed. The content of the chained small queues does not "
-           "match the contents of the large queue.\n\r");
+           "match the contents of the large queue.\n");
   return success;
 }
 
@@ -139,11 +139,11 @@ static bool queue_printQueueStatus(queue_t *q, bool overflowArg,
     result = flag ? result : false; // Note failure.
     if (flag)                       // Print helpful informational messages.
       printf(
-          "* queue_overFlow(%s) returned true. Should have returned false.\n\r",
+          "* queue_overFlow(%s) returned true. Should have returned false.\n",
           q->name);
     else
       printf(
-          "* queue_overFlow(%s) returned false. Should have returned true.\n\r",
+          "* queue_overFlow(%s) returned false. Should have returned true.\n",
           q->name);
   }
   if ((flag = queue_underflow(q)) !=
@@ -151,25 +151,25 @@ static bool queue_printQueueStatus(queue_t *q, bool overflowArg,
     result = flag ? result : false; // Note failure.
     if (flag)                       // Print helpful informational messages.
       printf("* queue_underFlow(%s) returned true. Should have returned "
-             "false.\n\r",
+             "false.\n",
              q->name);
     else
       printf("* queue_underFlow(%s) returned false. Should have returned "
-             "true.\n\r",
+             "true.\n",
              q->name);
   }
   if ((flag = queue_full(q)) !=
       fullArg) {                    // Check the queue status against the flag.
     result = flag ? result : false; // Note failure.
     if (flag) {                     // Print helpful informational messages.
-      printf("* queue_full(%s) returned true. Should have returned false.\n\r",
+      printf("* queue_full(%s) returned true. Should have returned false.\n",
              q->name);
-      printf("* queue: %s contains %ld elements.\n\r", queue_name(q),
+      printf("* queue: %s contains %u elements.\n", queue_name(q),
              queue_elementCount(q));
     } else {
-      printf("* queue_full(%s) returned false. Should have returned true.\n\r",
+      printf("* queue_full(%s) returned false. Should have returned true.\n",
              q->name);
-      printf("* queue: %s contains %ld elements.\n\r", queue_name(q),
+      printf("* queue: %s contains %u elements.\n", queue_name(q),
              queue_elementCount(q));
     }
   }
@@ -177,12 +177,12 @@ static bool queue_printQueueStatus(queue_t *q, bool overflowArg,
       emptyArg) {                   // Check the queue status against the flag.
     result = flag ? result : false; // Note failure.
     if (flag) {                     // Print helpful informational messages.
-      printf("* queue_empty(%s) returned true. Should have returned false.\n\r",
+      printf("* queue_empty(%s) returned true. Should have returned false.\n",
              q->name);
     } else {
-      printf("* queue_empty(%s) returned false. Should have returned true.\n\r",
+      printf("* queue_empty(%s) returned false. Should have returned true.\n",
              q->name);
-      printf("* queue: %s contains %ld elements.\n\r", queue_name(q),
+      printf("* queue: %s contains %u elements.\n", queue_name(q),
              queue_elementCount(q));
     }
   }
@@ -204,13 +204,13 @@ static bool queue_emptyTest(queue_t *testQ, double *dataArray,
     double poppedValue = queue_pop(testQ);
     tempResult = true;
     if (poppedValue != dataArray[arraySize - (testDataIndex + 1)]) {
-      printf("* Error: queue_pop() returned %lf, should have returned %lf.\n\r",
+      printf("* Error: queue_pop() returned %lf, should have returned %lf.\n",
              poppedValue, dataArray[arraySize - (testDataIndex + 1)]);
-      printf("* queue_pop invoked %ld times, testDataIndex: %ld\n\r",
+      printf("* queue_pop invoked %u times, testDataIndex: %d\n",
              arraySize - (testDataIndex + 1), testDataIndex);
       tempResult = false;
       printf("* queue_pop() failed. Recommend that you fix this problem before "
-             "proceeding further.\n\r");
+             "proceeding further.\n");
       return false;
     }
     testResult =
@@ -225,13 +225,13 @@ static bool queue_emptyTest(queue_t *testQ, double *dataArray,
       double temp;
       if ((temp = queue_readElementAt(testQ, queueIndex)) !=
           dataArray[arraySize - (testDataIndex) + queueIndex]) {
-        printf("* Error: queue_readElementAt(%ld) read %lf, queue should "
-               "contain %lf.\n\r",
+        printf("* Error: queue_readElementAt(%d) read %lf, queue should "
+               "contain %lf.\n",
                queueIndex, temp,
                dataArray[arraySize - (testDataIndex) + queueIndex]);
         printf("* Either queue_pop() or queue_readElementAt() contains a "
-               "bug.\n\r");
-        printf("* Repair this bug before proceeding further.\n\r");
+               "bug.\n");
+        printf("* Repair this bug before proceeding further.\n");
         tempResult = false;
       }
     }
@@ -264,9 +264,9 @@ static bool queue_fillTest(queue_t *testQ, double *dataArray,
     if ((temp = queue_readElementAt(testQ, testDataIndex) !=
                 dataArray[testDataIndex])) {
       printf("* Error: queue_readElementAt() failed. push value %lf does not "
-             "match read value %lf.\n\r",
+             "match read value %lf.\n",
              temp, dataArray[testDataIndex]);
-      printf("* Bug is likely in queue_push() or queue_readElementAt().\n\r");
+      printf("* Bug is likely in queue_push() or queue_readElementAt().\n");
       testResult = false; // Failed the test.
       break;              // Stop iterating at this point.
     }
@@ -319,7 +319,7 @@ static bool queue_pushPopTest() {
   tempResult = queue_empty(&testQ);
   if (!tempResult) {
     printf(
-        "* Error: queue_empty(%s) should return true but returned false.\n\r",
+        "* Error: queue_empty(%s) should return true but returned false.\n",
         queue_name(&testQ));
   }
   testResult = tempResult ? testResult
@@ -342,7 +342,7 @@ static bool queue_pushPopTest() {
     // Potentially reduce pushCount to remaining values in noncircularQ.
     pushCount = pushCount <= ncqUnusedValues ? pushCount : ncqUnusedValues;
 #ifdef QUEUE_PRINT_INFO_MESSAGES
-    printf("push-count:%d\n\r", pushCount);
+    printf("push-count:%u\n", pushCount);
 #endif
     for (uint16_t i = 0; i < pushCount; i++) {
       queue_push(&testQ, ncq[ncqPushIndexPtr++]);
@@ -351,7 +351,7 @@ static bool queue_pushPopTest() {
     // are currently stored in the testQ.
     uint16_t simQElementCount = ncqPushIndexPtr - ncqPopIndexPtr;
     if (queue_elementCount(&testQ) != simQElementCount) {
-      printf("* Error: queue_elementCount(%s) returned %ld should be %d\n\r.",
+      printf("* Error: queue_elementCount(%s) returned %u should be %u\n.",
              queue_name(&testQ), queue_elementCount(&testQ), simQElementCount);
       tempResult = false;
       break; // This needs to be fixed before proceeding further.
@@ -362,7 +362,7 @@ static bool queue_pushPopTest() {
     // overrun the non-circular queue).
     popCount = simQElementCount >= popCount ? popCount : simQElementCount;
 #ifdef QUEUE_PRINT_INFO_MESSAGES
-    printf("pop-count:%d\n\r", popCount);
+    printf("pop-count:%u\n", popCount);
 #endif
     // Check each pop'd value for correctness.
     double temp;
@@ -396,7 +396,7 @@ bool queue_testErrorConditions() {
   // See that the empty function works correctly.
   tempResult = queue_empty(&testQ);
   if (!tempResult) {
-    printf("* Error: queue_empty(%s) returned false, should be true.\n\r",
+    printf("* Error: queue_empty(%s) returned false, should be true.\n",
            queue_name(&testQ));
   }
   testResult = tempResult ? testResult : false;
@@ -406,7 +406,7 @@ bool queue_testErrorConditions() {
   queue_pop(&testQ);
   tempResult = queue_underflow(&testQ);
   if (!tempResult) {
-    printf("* Error: queue_underflow(%s) returned false, should be true.\n\r",
+    printf("* Error: queue_underflow(%s) returned false, should be true.\n",
            queue_name(&testQ));
   }
   testResult = tempResult ? testResult : false;
@@ -418,7 +418,7 @@ bool queue_testErrorConditions() {
   // Check for overflow should be true.
   tempResult = queue_overflow(&testQ);
   if (!tempResult) {
-    printf("* Error: queue_overflow(%s) returned false, should be true.\n\r",
+    printf("* Error: queue_overflow(%s) returned false, should be true.\n",
            queue_name(&testQ));
   }
   testResult = tempResult ? testResult : false;
@@ -426,14 +426,14 @@ bool queue_testErrorConditions() {
   // false.
   tempResult = queue_underflow(&testQ);
   if (tempResult) {
-    printf("* Error: queue_underflow(%s) returned true, should be false.\n\r",
+    printf("* Error: queue_underflow(%s) returned true, should be false.\n",
            queue_name(&testQ));
   }
   testResult = !tempResult ? testResult : false;
   // Check to see that the queue is full.
   tempResult = queue_full(&testQ);
   if (!tempResult) {
-    printf("* Error: queue_full(%s) returned false, should be true.\n\r",
+    printf("* Error: queue_full(%s) returned false, should be true.\n",
            queue_name(&testQ));
   }
   testResult = tempResult ? testResult : false;
@@ -441,21 +441,21 @@ bool queue_testErrorConditions() {
   queue_pop(&testQ);
   tempResult = queue_overflow(&testQ);
   if (tempResult) {
-    printf("** Error: queue_overflow(%s) returned true, should be false.\n\r",
+    printf("** Error: queue_overflow(%s) returned true, should be false.\n",
            queue_name(&testQ));
   }
   testResult = !tempResult ? testResult : false;
   // Check to see that the queue is no longer full after one pop.
   tempResult = queue_full(&testQ);
   if (tempResult) {
-    printf("* Error: queue_full(%s) returned true, should be false.\n\r",
+    printf("* Error: queue_full(%s) returned true, should be false.\n",
            queue_name(&testQ));
   }
   testResult = !tempResult ? testResult : false;
   // underflow flag should also be false at this point.
   tempResult = queue_underflow(&testQ);
   if (tempResult) {
-    printf("* Error: queue_underflow(%s) returned true, should be false.\n\r",
+    printf("* Error: queue_underflow(%s) returned true, should be false.\n",
            queue_name(&testQ));
   }
   testResult = !tempResult ? testResult : false;
@@ -495,9 +495,9 @@ bool queue_overwritePushTest() {
   for (uint16_t i = 0; i < OVERWRITE_PUSH_TEST_QUEUE_SIZE; i++) {
     if (queue_readElementAt(&testQ, i) !=
         dataArray2[i]) { // Are the correct values returned from the queue?
-      printf("* Error: the values read from the queue: %s are incorrect after "
-             "queue_overwritePush().\n\r",
-             queue_name(&testQ));
+      printf("* Error: the value read from queue: %s[%u] "
+             "is incorrect after queue_overwritePush().\n",
+             queue_name(&testQ), i);
       testResult = false;
       break;
     }
@@ -531,12 +531,12 @@ bool queue_runTest() {
   // Overall test will be executed QUEUE_TEST_MAX_LOOP_COUNT times.
   for (uint32_t loopCount = 0; loopCount < QUEUE_TEST_MAX_LOOP_COUNT;
        loopCount++) {
-    printf("=== Queue Test Iteration %ld ===\n\r", loopCount);
+    printf("=== Queue Test Iteration %u ===\n", loopCount);
     // Compute the size of the data set randomly within given bounds.
     uint32_t arraySize = (rand() % (QUEUE_TEST_MAX_QUEUE_SIZE / 2)) +
                          (QUEUE_TEST_MAX_QUEUE_SIZE / 2);
     printf("=== Commencing basic fill test (calling queue_push() until full) "
-           "of queue of size: %ld. === \n\r",
+           "of queue of size: %u. === \n",
            arraySize);
     // Allocate the array.
     double *dataArray =
@@ -549,25 +549,25 @@ bool queue_runTest() {
     testResult =
         queue_fillTest(&testQ, dataArray, arraySize) ? testResult : false;
     if (testResult) {
-      printf("=== Queue: %s passed a basic fill test.\n\r", queue_name(&testQ));
+      printf("=== Queue: %s passed a basic fill test.\n", queue_name(&testQ));
     } else {
-      printf("=== Queue: %s failed a basic fill test.\n\r", queue_name(&testQ));
+      printf("=== Queue: %s failed a basic fill test.\n", queue_name(&testQ));
     }
     if (queue_elementCount(&testQ) != arraySize) {
-      printf("* Error: queue_elementCount(%s) is %ld, should be %ld\n\r",
+      printf("* Error: queue_elementCount(%s) is %u, should be %u\n",
              queue_name(&testQ), queue_elementCount(&testQ), arraySize);
-      printf("* Error: queue_elementCount() likely has a bug.\n\r");
+      printf("* Error: queue_elementCount() likely has a bug.\n");
       testResult = false;
     }
     // Run the queue-empty test.
     printf("=== Commencing basic empty test (calling queue_pop() until empty) "
-           "=== \n\r");
+           "=== \n");
     bool tempResult = queue_emptyTest(&testQ, dataArray, arraySize);
     if (tempResult) {
-      printf("=== Queue: %s passed a basic empty test.\n\r",
+      printf("=== Queue: %s passed a basic empty test.\n",
              queue_name(&testQ));
     } else {
-      printf("=== Queue: %s failed a basic empty test.\n\r",
+      printf("=== Queue: %s failed a basic empty test.\n",
              queue_name(&testQ));
     }
     testResult = tempResult
@@ -575,53 +575,53 @@ bool queue_runTest() {
                      : false; // Logical AND of testResult and tempResult.
     tempResult = true;
     if (queue_elementCount(&testQ) != 0) {
-      printf("* Error: queue_elementCount(%s) is %ld, should be %d\n\r",
+      printf("* Error: queue_elementCount(%s) is %u, should be %u\n",
              queue_name(&testQ), queue_elementCount(&testQ), 0);
-      printf("* Error: queue_elementCount() likely has a bug.\n\r");
+      printf("* Error: queue_elementCount() likely has a bug.\n");
       tempResult = false;
     }
     // Run the push/pop test.
-    printf("=== Commencing push/pop test.) === \n\r");
+    printf("=== Commencing push/pop test.) === \n");
     tempResult = queue_pushPopTest();
     if (tempResult) {
-      printf("=== Queue: %s passed a push/pop test.\n\r", queue_name(&testQ));
+      printf("=== Queue: %s passed a push/pop test.\n", queue_name(&testQ));
     } else {
-      printf("=== Queue: %s failed a push/pop test.\n\r", queue_name(&testQ));
+      printf("=== Queue: %s failed a push/pop test.\n", queue_name(&testQ));
     }
     testResult = tempResult
                      ? testResult
                      : false; // Logical AND of testResult and tempResult.
     printf("=== Commencing error-condition test (calling queue_pop() until "
-           "empty) === \n\r");
+           "empty) === \n");
     tempResult = queue_testErrorConditions();
     if (tempResult) {
-      printf("=== Queue: %s passed error-condition test.\n\r",
+      printf("=== Queue: %s passed error-condition test.\n",
              queue_name(&testQ));
     } else {
-      printf("=== Queue: %s failed error-condition test.\n\r",
+      printf("=== Queue: %s failed error-condition test.\n",
              queue_name(&testQ));
     }
     testResult = tempResult
                      ? testResult
                      : false; // Logical AND of testResult and tempResult.
     printf("=== Commencing overwritePush test (calling queue_pop() until "
-           "empty) === \n\r");
+           "empty) === \n");
     tempResult = queue_overwritePushTest();
     if (tempResult) {
-      printf("=== Queue: %s passed overwritePush test.\n\r",
+      printf("=== Queue: %s passed overwritePush test.\n",
              queue_name(&testQ));
     } else {
-      printf("=== Queue: %s failed overwritePush test.\n\r",
+      printf("=== Queue: %s failed overwritePush test.\n",
              queue_name(&testQ));
     }
     testResult = tempResult
                      ? testResult
                      : false; // Logical AND of testResult and tempResult.
     if (testResult) {
-      printf("=== All queue tests passed. ===\n\r\n\r");
+      printf("=== All queue tests passed. ===\n\n");
     } else {
       printf("=== Some queue tests failed. Look at informational "
-             "messages.\n\r\n\r");
+             "messages.\n\n");
     }
     // All done. Free up all allocated memory.
     queue_garbageCollect(&testQ);

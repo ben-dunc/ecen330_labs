@@ -1,2 +1,2 @@
 all:
-	gcc main.c -o main
+	gcc $(CFLAGS) main.c -o main

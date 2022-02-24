@@ -1,9 +1,9 @@
 {
     "[c]": {
-        "editor.formatOnSave": true,
+        "editor.formatOnSave": false,
     },
     "[cpp]": {
-        "editor.formatOnSave": true,
+        "editor.formatOnSave": false,
     },
     "C_Cpp.clang_format_fallbackStyle": "LLVM",
     "files.associations": {
@@ -13,7 +13,8 @@
         "stdint.h": "c",
         "simondisplay.h": "c",
         "simoncontrol.h": "c",
-        "touchhandler.h": "c"
+        "touchhandler.h": "c",
+        "filter.h": "c"
     },
     "cmake.configureOnOpen": false
 }

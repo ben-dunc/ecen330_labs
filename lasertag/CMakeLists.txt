@@ -8,7 +8,7 @@ isr.c
 trigger.c
 transmitter.c
 hitLedTimer.c
-# lockoutTimer.c
+lockoutTimer.c
 # detector.c
 # sound.c
 # timer_ps.c

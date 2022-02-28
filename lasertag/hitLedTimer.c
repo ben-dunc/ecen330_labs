@@ -1,6 +1,9 @@
 #include "hitLedTimer.h"
 #include "leds.h"
 #include "mio.h"
+#include "buttons.h"
+#include "utils.h"
+#include <stdio.h>
 
 // The lockoutTimer is active for 1/2 second once it is started.
 // It is used to lock-out the detector once a hit has been detected.
@@ -26,10 +29,16 @@ static bool enable;
 volatile static bool timerStartFlag;
 static uint32_t timer;
 
+
+
 // Need to init things.
 void hitLedTimer_init() {
   // Initialize the leds.
   leds_init(false);
+  // false disables any debug printing if there is a system failure during init.
+  mio_init(false);  
+  // Configure the signal direction of the pin to be an output.
+  mio_setPinAsOutput(HIT_LED_TIMER_OUTPUT_PIN);  
   currentState = init_st;
   timer = RESET_VALUE;
 }
@@ -37,8 +46,14 @@ void hitLedTimer_init() {
 // Calling this starts the timer.
 void hitLedTimer_start() { timerStartFlag = true; }
 
+// Disables the hitLedTimer.
+void hitLedTimer_disable() { enable = false; }
+
+// Enables the hitLedTimer.
+void hitLedTimer_enable() { enable = true; }
+
 // Returns true if the timer is currently running.
-bool hitLedTimer_running() { return (timer != RESET_VALUE); }
+bool hitLedTimer_running() { return timerStartFlag; }
 
 // Turns the gun's hit-LED on.
 void hitLedTimer_turnLedOn() {
@@ -64,7 +79,7 @@ void hitLedTimer_tick() {
     // Check to see if the enable flag is on.
     if (enable && timerStartFlag) {
       // Illuminate LED LD0.
-      leds_write(TURN_ON_LED0);
+      hitLedTimer_turnLedOn();
       currentState = illuminate_st;
       timer = RESET_VALUE;
     }
@@ -74,19 +89,24 @@ void hitLedTimer_tick() {
     // Check to see if the enable flag is on.
     if (!enable) {
       currentState = finished_st;
+      // Turn off LEDs.
+      hitLedTimer_turnLedOff();
     }
     // Check to see if the timer is up.
-    else if (timer == MAX_TIMER_COUNT) {
+    else if (timer >= MAX_TIMER_COUNT) {
       // Turn off LED LD00.
-      leds_write(TURN_OFF_LED0);
+      hitLedTimer_turnLedOff();
       currentState = finished_st;
+      timer = RESET_VALUE;
     }
+    break;
 
   case finished_st:
     // Check to see if the enable flag is on.
     if (enable) {
       currentState = init_st;
     }
+    break;
   }
 
   // State actions.
@@ -97,18 +117,33 @@ void hitLedTimer_tick() {
   case illuminate_st:
     // Increment timer.
     timer++;
+    break;
   case finished_st:
     timerStartFlag = false;
     break;
   }
 }
 
-// Disables the hitLedTimer.
-void hitLedTimer_disable() { enable = false; }
-
-// Enables the hitLedTimer.
-void hitLedTimer_enable() { enable = true; }
-
 // Runs a visual test of the hit LED.
 // The test continuously blinks the hit-led on and off.
-void hitLedTimer_runTest() {}
+void hitLedTimer_runTest() {
+  // Enable the hit led.
+  printf("\n\n==========================================\nHit LED test. \nPress button 0 to start the test. \nPress button 1 to finish the test.\n");
+  hitLedTimer_enable();
+  // Wait for button 0.
+  while (!(buttons_read() & BUTTONS_BTN0_MASK));
+  // wait for button 0 is depressed.
+  while ((buttons_read() & BUTTONS_BTN0_MASK));
+
+  // Run a test for flashing the led. wait for button 1 to finish test.
+  while (!(buttons_read() & BUTTONS_BTN1_MASK)) {
+    // Start the led flash.
+    hitLedTimer_start();
+    // wait for the led timer to finish.
+    while (hitLedTimer_running());
+    // wait 300 ms
+    utils_msDelay(300);
+  }
+  
+  printf("Ended hit LED test test.\n==========================================\n\n");
+}

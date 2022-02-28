@@ -17,12 +17,14 @@ typedef uint32_t
 void isr_init() {
   transmitter_init();
   trigger_init();
+  hitLedTimer_init();
+  lockoutTimer_init();
 }
 
 // This function is invoked by the timer interrupt at 100 kHz.
 void isr_function() {
   transmitter_tick();
   trigger_tick();
-  //   hitLedTimer_tick();
-  //   lockoutTimer_tick();
+  hitLedTimer_tick();
+  lockoutTimer_tick();
 }

@@ -82,7 +82,7 @@ void trigger_debug() {
   static trigger_st_t prevState = init_st;
 
   // check if they're different
-  if (prevState != currentState) {
+  if (prevState != currentState && enable) {
     if (currentState == transmit_st) {
       printf("D\n");
     } else if (currentState == finished_st) {
@@ -212,5 +212,6 @@ void trigger_runTest() {
   trigger_enable();
   while (!(buttons_read() & BUTTONS_BTN1_MASK));
   while ((buttons_read() & BUTTONS_BTN1_MASK));
+  trigger_disable();
   printf("Ended trigger test.\n==========================================\n\n");
 }

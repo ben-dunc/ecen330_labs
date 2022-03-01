@@ -7,6 +7,7 @@
 #define RESET_VALUE 0
 #define DEBUG false
 
+// state machine
 typedef enum {
   init_st,
   timer_st,
@@ -120,10 +121,8 @@ bool lockoutTimer_runTest() {
   while (lockoutTimer_running());
 
   intervalTimer_stop(INTERVAL_TIMER_TIMER_1);
-
   double time = intervalTimer_getTotalDurationInSeconds(INTERVAL_TIMER_TIMER_1);
   printf("time spent: %f\n", time);
-
 
   printf("Ended trigger test.\n==========================================\n\n");
 }

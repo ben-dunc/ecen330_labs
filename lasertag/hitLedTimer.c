@@ -17,7 +17,9 @@
 #define TURN_OFF_LED0 0x00
 #define HIGH 1
 #define LOW 0
+#define TEST_DELAY_MS 300
 
+// state machine
 typedef enum {
   init_st,
   illuminate_st,
@@ -28,8 +30,6 @@ static led_st_t currentState;
 static bool enable;
 volatile static bool timerStartFlag;
 static uint32_t timer;
-
-
 
 // Need to init things.
 void hitLedTimer_init() {
@@ -142,7 +142,7 @@ void hitLedTimer_runTest() {
     // wait for the led timer to finish.
     while (hitLedTimer_running());
     // wait 300 ms
-    utils_msDelay(300);
+    utils_msDelay(TEST_DELAY_MS);
   }
   
   printf("Ended hit LED test test.\n==========================================\n\n");

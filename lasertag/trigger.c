@@ -10,6 +10,7 @@
 #define RESET_TIMER 0
 #define DEBUG true
 
+// state machine
 typedef enum {
   init_st,
   wait_st,
@@ -18,8 +19,8 @@ typedef enum {
   release_debounce_st,
   finished_st,
 } trigger_st_t;
-
 static trigger_st_t currentState;
+
 static bool enable;
 static bool ignoreGunInput;
 static uint32_t timer;
@@ -83,6 +84,7 @@ void trigger_debug() {
 
   // check if they're different
   if (prevState != currentState && enable) {
+    // output them if they are
     switch (currentState) {
       case transmit_st:
         printf("D\n");
@@ -216,6 +218,7 @@ void trigger_runTest() {
   // Enable the trigger.
   printf("\n\n==========================================\nStarted trigger test. \nPress button 1 to finish the test.\nPress button 0 to test debounce.\n");
   
+  // perform test until button 1 is pressed
   while (!(buttons_read() & BUTTONS_BTN1_MASK)) {
     trigger_enable();
   }

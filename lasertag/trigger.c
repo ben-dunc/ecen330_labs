@@ -83,10 +83,13 @@ void trigger_debug() {
 
   // check if they're different
   if (prevState != currentState && enable) {
-    if (currentState == transmit_st) {
-      printf("D\n");
-    } else if (currentState == finished_st) {
-      printf("U\n");
+    switch (currentState) {
+      case transmit_st:
+        printf("D\n");
+      break;
+      case finished_st:
+        printf("U\n");
+      break;
     }
 
     prevState = currentState;
@@ -129,10 +132,11 @@ void trigger_tick() {
     } else {
       // Check to see if the trigger is pressed.
       if (!triggerPressed()) {
-        currentState = wait_st;
+        //currentState = wait_st;
+        timer = RESET_TIMER;
       }
       // If the debounce timer is up, start transmitting.
-      else if (timer == MAX_TIMER_COUNT) {
+      else if (timer >= MAX_TIMER_COUNT) {
         currentState = transmit_st;
         // Start the transmitter.
         transmitter_run();
@@ -161,7 +165,8 @@ void trigger_tick() {
     } else {
       // Check to see if the trigger is pressed.
       if (triggerPressed()) {
-        currentState = transmit_st;
+        //currentState = transmit_st;
+        timer = RESET_TIMER;
       }
       // If the debounce timer is up, start transmitting.
       else if (timer == MAX_TIMER_COUNT) {
@@ -199,6 +204,7 @@ void trigger_tick() {
     break;
   finished_st:
     finishedDebounce = true;
+    timer = RESET_TIMER;
     break;
   }
 }
@@ -209,9 +215,10 @@ void trigger_tick() {
 void trigger_runTest() {
   // Enable the trigger.
   printf("\n\n==========================================\nStarted trigger test. \nPress button 1 to finish the test.\nPress button 0 to test debounce.\n");
-  trigger_enable();
-  while (!(buttons_read() & BUTTONS_BTN1_MASK));
-  while ((buttons_read() & BUTTONS_BTN1_MASK));
+  
+  while (!(buttons_read() & BUTTONS_BTN1_MASK)) {
+    trigger_enable();
+  }
   trigger_disable();
   printf("Ended trigger test.\n==========================================\n\n");
 }

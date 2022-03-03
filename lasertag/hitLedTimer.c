@@ -1,7 +1,7 @@
 #include "hitLedTimer.h"
+#include "buttons.h"
 #include "leds.h"
 #include "mio.h"
-#include "buttons.h"
 #include "utils.h"
 #include <stdio.h>
 
@@ -36,9 +36,9 @@ void hitLedTimer_init() {
   // Initialize the leds.
   leds_init(false);
   // false disables any debug printing if there is a system failure during init.
-  mio_init(false);  
+  mio_init(false);
   // Configure the signal direction of the pin to be an output.
-  mio_setPinAsOutput(HIT_LED_TIMER_OUTPUT_PIN);  
+  mio_setPinAsOutput(HIT_LED_TIMER_OUTPUT_PIN);
   currentState = init_st;
   timer = RESET_VALUE;
 }
@@ -128,22 +128,28 @@ void hitLedTimer_tick() {
 // The test continuously blinks the hit-led on and off.
 void hitLedTimer_runTest() {
   // Enable the hit led.
-  printf("\n\n==========================================\nHit LED test. \nPress button 0 to start the test. \nPress button 1 to finish the test.\n");
+  printf(
+      "\n\n==========================================\nHit LED test. \nPress "
+      "button 0 to start the test. \nPress button 1 to finish the test.\n");
   hitLedTimer_enable();
   // Wait for button 0.
-  while (!(buttons_read() & BUTTONS_BTN0_MASK));
+  while (!(buttons_read() & BUTTONS_BTN0_MASK))
+    ;
   // wait for button 0 is depressed.
-  while ((buttons_read() & BUTTONS_BTN0_MASK));
+  while ((buttons_read() & BUTTONS_BTN0_MASK))
+    ;
 
   // Run a test for flashing the led. wait for button 1 to finish test.
   while (!(buttons_read() & BUTTONS_BTN1_MASK)) {
     // Start the led flash.
     hitLedTimer_start();
     // wait for the led timer to finish.
-    while (hitLedTimer_running());
+    while (hitLedTimer_running())
+      ;
     // wait 300 ms
     utils_msDelay(TEST_DELAY_MS);
   }
-  
-  printf("Ended hit LED test test.\n==========================================\n\n");
+
+  printf("Ended hit LED test "
+         "test.\n==========================================\n\n");
 }

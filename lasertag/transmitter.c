@@ -18,12 +18,7 @@
 #define DIVIDE_BY 2
 
 // state machine
-typedef enum {
-  init_st,
-  high_st,
-  low_st,
-  finished_st
-} transmitter_st_t;
+typedef enum { init_st, high_st, low_st, finished_st } transmitter_st_t;
 static enum transmitter_st_t currentState;
 
 static uint16_t freqNum = 0;    // can be 0 - 9
@@ -48,12 +43,14 @@ void transmitter_init() {
 
 // Sets the mio pin high
 void transmitter_set_jf1_to_one() {
-  mio_writePin(TRANSMITTER_OUTPUT_PIN, TRANSMITTER_HIGH_VALUE); // Write a '1' to JF-1.
+  mio_writePin(TRANSMITTER_OUTPUT_PIN,
+               TRANSMITTER_HIGH_VALUE); // Write a '1' to JF-1.
 }
 
 // Sets the mio pin low
 void transmitter_set_jf1_to_zero() {
-  mio_writePin(TRANSMITTER_OUTPUT_PIN, TRANSMITTER_LOW_VALUE); // Write a '1' to JF-1.
+  mio_writePin(TRANSMITTER_OUTPUT_PIN,
+               TRANSMITTER_LOW_VALUE); // Write a '1' to JF-1.
 }
 
 // Starts the transmitter.
@@ -118,7 +115,7 @@ void transmitter_debug() {
   // output stuffs
   if (currentState == high_st) {
     printf("1");
-  // output stuffs
+    // output stuffs
   } else if (currentState == low_st) {
     printf("0");
   }
@@ -207,20 +204,20 @@ void transmitter_runTest() {
   transmitter_enableTestMode();
   printf("starting transmitter_runTest()\n");
   // loop till button 1 is pressed
-  while (!(buttons_read() & BUTTONS_BTN1_MASK)) { // Run continuously until BTN1 is pressed.
+  while (!(buttons_read() &
+           BUTTONS_BTN1_MASK)) { // Run continuously until BTN1 is pressed.
     printf("Select a frequency and push button 0 to start\n");
     // wait till button 0 is pressed
-    while (!(buttons_read() & BUTTONS_BTN0_MASK));
+    while (!(buttons_read() & BUTTONS_BTN0_MASK))
+      ;
 
     // Compute a safe number from the switches.
-    uint16_t switchValue = switches_read() % FILTER_FREQUENCY_COUNT; 
+    uint16_t switchValue = switches_read() % FILTER_FREQUENCY_COUNT;
     // set the frequency number based upon switch value.
     transmitter_setFrequencyNumber(switchValue);
     printf("starting another test period switch frequency number\n and actual "
            "frequency number: %d, %d.\n",
-           switchValue, 
-           transmitter_getFrequencyNumber()
-    );
+           switchValue, transmitter_getFrequencyNumber());
 
     transmitter_run(); // Start the transmitter.
 
@@ -266,17 +263,19 @@ void transmitter_runNoncontinuousTest() {
   // Run until button 1 is pressed
   while (!(buttons_read() & BUTTONS_BTN1_MASK)) {
     // set the frequency number based upon switch value.
-    transmitter_setFrequencyNumber(switches_read() % FILTER_FREQUENCY_COUNT); 
+    transmitter_setFrequencyNumber(switches_read() % FILTER_FREQUENCY_COUNT);
     transmitter_run();
 
     // Run till the transmitter is finished
-    while (transmitter_running());
+    while (transmitter_running())
+      ;
     utils_msDelay(NON_CONTINUOUS_TEST_DELAY);
   }
   // wait till depressed
-  while ((buttons_read() & BUTTONS_BTN1_MASK));
+  while ((buttons_read() & BUTTONS_BTN1_MASK))
+    ;
   printf("Finished non continuous test.\n"
-          "==========================================\n\n");
+         "==========================================\n\n");
 }
 
 // Tests the transmitter in continuous mode.
@@ -310,7 +309,8 @@ void transmitter_runContinuousTest() {
   }
 
   // wait till depressed
-  while ((buttons_read() & BUTTONS_BTN1_MASK));
+  while ((buttons_read() & BUTTONS_BTN1_MASK))
+    ;
 
   printf("Finished continuous "
          "test.\n==========================================\n");

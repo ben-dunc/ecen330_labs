@@ -34,14 +34,14 @@ void lockoutTimer_debug() {
   if (prevState != currentState) {
     // output thingy
     switch (currentState) {
-      case init_st:
-        printf("\tinit_st\n");
+    case init_st:
+      printf("\tinit_st\n");
       break;
-      case timer_st:
-        printf("\ttimer_st\n");
+    case timer_st:
+      printf("\ttimer_st\n");
       break;
-      case finished_st:
-        printf("\tfinished state\n");
+    case finished_st:
+      printf("\tfinished state\n");
       break;
     }
 
@@ -51,7 +51,7 @@ void lockoutTimer_debug() {
 
 // Standard tick function.
 void lockoutTimer_tick() {
-  //debug
+  // debug
   if (DEBUG) {
     lockoutTimer_debug();
   }
@@ -101,24 +101,28 @@ void lockoutTimer_tick() {
 // This test uses the interval timer to determine correct delay for
 // the interval timer.
 bool lockoutTimer_runTest() {
-    // Enable the hit led.
-  printf("\n\n==========================================\nStarted lockout test.\nPress button 1 to finish the test.\nPress button 0 to start test.\n");
+  // Enable the hit led.
+  printf("\n\n==========================================\nStarted lockout "
+         "test.\nPress button 1 to finish the test.\nPress button 0 to start "
+         "test.\n");
 
   intervalTimer_init(INTERVAL_TIMER_TIMER_1);
   intervalTimer_reset(INTERVAL_TIMER_TIMER_1);
-  
-  
+
   // wait till button 0 is pressed
-  while (!(buttons_read() & BUTTONS_BTN0_MASK));
+  while (!(buttons_read() & BUTTONS_BTN0_MASK))
+    ;
   // wait till button 0 is depressed
-  while ((buttons_read() & BUTTONS_BTN0_MASK));
+  while ((buttons_read() & BUTTONS_BTN0_MASK))
+    ;
   printf("Timer started\n");
 
   lockoutTimer_start();
   intervalTimer_start(INTERVAL_TIMER_TIMER_1);
 
   // what until the timer is done
-  while (lockoutTimer_running());
+  while (lockoutTimer_running())
+    ;
 
   intervalTimer_stop(INTERVAL_TIMER_TIMER_1);
   double time = intervalTimer_getTotalDurationInSeconds(INTERVAL_TIMER_TIMER_1);

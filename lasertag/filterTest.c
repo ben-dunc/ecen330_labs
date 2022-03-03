@@ -540,7 +540,7 @@ void filterTest_runSquareWaveIirPowerTest(uint16_t filterNumber,
        testPeriodIndex++) { // Only use the first 10 standard frequencies.
     double power = 0.0;
     filterTest_fillQueue(filter_getXQueue(), 0.0); // zero out the x-queue.
-    filterTest_fillQueue(filter_getYQueue(), 0.0); // zero out the x-queue.
+    filterTest_fillQueue(filter_getYQueue(), 0.0); // zero out the y-queue.
     filterTest_fillQueue(
         filter_getZQueue(filterNumber),
         0.0); // zero out the z-queue for the IIR filter under test.

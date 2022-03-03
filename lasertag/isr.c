@@ -4,12 +4,13 @@
 #include "transmitter.h"
 #include "trigger.h"
 #include "queue.h"
+#include "interrupts.h"
 #include <stdint.h>
+#include <stdio.h>
 
 #define ADC_BUFFER_SIZE 100000
 
-typedef uint32_t
-    isr_AdcValue_t; // Used to represent ADC values in the ADC buffer.
+typedef uint32_t isr_AdcValue_t; // Used to represent ADC values in the ADC buffer.
 
 // isr provides the isr_function() where you will place functions that require
 // accurate timing. A buffer for storing values from the Analog to Digital
@@ -43,37 +44,56 @@ void isr_init() {
   lockoutTimer_init();
 }
 
-// This function is invoked by the timer interrupt at 100 kHz.
-void isr_function() {
-  transmitter_tick();
-  trigger_tick();
-  hitLedTimer_tick();
-  lockoutTimer_tick();
-  // Put latest ADC value in adcBuffer
-	// Call state machine tick functions
+// This returns the number of values in the ADC buffer.
+uint32_t isr_adcBufferElementCount() {
+  // Determine if the indexIn has already wrapped around.
+  if (myAdcBuffer.indexIn < myAdcBuffer.indexOut) {
+    // return the difference with the buffer size added to the indexIn.
+    return (myAdcBuffer.indexIn + ADC_BUFFER_SIZE - myAdcBuffer.indexOut);
+  }
+  // If indexIn is not less than indexOut, return the difference between the two.
+  else return myAdcBuffer.indexIn - myAdcBuffer.indexOut;
 }
 
-// Implemented as a fixed-size circular buffer.
-// indexIn always points to an empty location (by definition).
-// indexOut always points to the oldest element.
-// Buffer is empty if indexIn == indexOut.
-// Buffer is full if incremented indexIn == indexOut.
-// This adds data to the ADC queue. Data are removed from this queue and used by
-// the detector.
+
+// This adds data to the ADC queue.
 void isr_addDataToAdcBuffer(uint32_t adcData) {
-  myAdcBuffer.data[myAdcBuffer.indexIn] = adcData;
-  myAdcBuffer.indexIn = (myAdcBuffer.indexIn + 1) % ADC_BUFFER_SIZE;
+  // Check if the adc buffer is full
+  if (isr_adcBufferElementCount() == ADC_BUFFER_SIZE) {
+    printf("ADC buffer is full!\n");
+  }
+  // If the buffer isn't full, add in the given data.
+  else {
+    myAdcBuffer.data[myAdcBuffer.indexIn] = adcData;
+    // Increment indexIn, and wrap around the array if needed.
+    myAdcBuffer.indexIn = ++myAdcBuffer.indexIn % ADC_BUFFER_SIZE;
+  }
 }
 
 // Removes a single item from the ADC buffer.
 // Does not signal an error if the ADC buffer is currently empty
 // Simply returns a default value of 0 if the buffer is currently empty.
-// This removes a value from the ADC buffer.
 uint32_t isr_removeDataFromAdcBuffer() {
-
+  // Check if buffer is empty.
+  if (isr_adcBufferElementCount() == 0) {
+    printf("ADC buffer is empty!\n");
+    return 0;
+  }
+  // If the buffer isn't empty, return the value found at indexOut.
+  else {
+    uint32_t returnValue = myAdcBuffer.data[myAdcBuffer.indexOut];
+    myAdcBuffer.indexOut = (myAdcBuffer.indexOut + 1) % ADC_BUFFER_SIZE;
+    return returnValue;
+  }
 }
 
-// This returns the number of values in the ADC buffer.
-uint32_t isr_adcBufferElementCount() {
-
+// This function is invoked by the timer interrupt at 100 kHz.
+void isr_function() {
+  // Read the most recent value from the ADC and put add to adc buffer.
+  isr_addDataToAdcBuffer(interrupts_getAdcData());
+  // Call state machine tick functions
+  transmitter_tick();
+  trigger_tick();
+  hitLedTimer_tick();
+  lockoutTimer_tick();
 }

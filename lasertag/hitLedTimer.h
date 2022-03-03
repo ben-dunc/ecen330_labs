@@ -12,9 +12,9 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 
 #include <stdbool.h>
 
-// The lockoutTimer is active for 1/2 second once it is started.
-// It is used to lock-out the detector once a hit has been detected.
-// This ensure that only one hit is detected per 1/2-second interval.
+// The hitLedTimer is active for 1/2 second once it is started.
+// While active, it turns on the LED connected to MIO pin 11
+// and also LED LD0 on the ZYBO board.
 
 #define HIT_LED_TIMER_EXPIRE_VALUE 50000 // Defined in terms of 100 kHz ticks.
 #define HIT_LED_TIMER_OUTPUT_PIN 11      // JF-3

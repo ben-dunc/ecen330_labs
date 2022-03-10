@@ -19,7 +19,7 @@
 
 // state machine
 typedef enum { init_st, high_st, low_st, finished_st } transmitter_st_t;
-static enum transmitter_st_t currentState;
+static transmitter_st_t currentState;
 
 static uint16_t freqNum = 0;    // can be 0 - 9
 static uint16_t newFreqNum = 0; // can be 0 - 9
@@ -89,7 +89,7 @@ void transmitter_enableTestMode() { testing = true; }
 
 // debugging output
 void transmitter_debug() {
-  static enum transmitter_st_t prevState = init_st;
+  static transmitter_st_t prevState = init_st;
 
   // Perform state updates.
   if (prevState != currentState) {

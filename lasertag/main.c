@@ -11,10 +11,10 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 // #define RUNNING_MODE_TESTS
 
 // Uncomment to run Milestone 3, Task 2
-#define RUNNING_MODE_M3_T2
+// #define RUNNING_MODE_M3_T2
 
 // Uncomment to run continuous/shooter mode, Milestone 3, Task 3
-// #define RUNNING_MODE_M3_T3
+#define RUNNING_MODE_M3_T3
 
 // Uncomment to run two-player mode, Milestone 5
 // #define RUNNING_MODE_M5
@@ -48,8 +48,8 @@ int main() {
   // queue_runTest(); // M1
   // interrupts not needed for these tests
   // filterTest_runTest(); // M3 T1
-  transmitter_runTest(); // M3 T2
-  // detector_runTest(); // M3 T3
+  // transmitter_runTest(); // M3 T2
+  detector_runTest(); // M3 T3
   // sound_runTest(); // M4
 #endif
 

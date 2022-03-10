@@ -83,6 +83,7 @@ uint32_t isr_removeDataFromAdcBuffer() {
   else {
     uint32_t returnValue = myAdcBuffer.data[myAdcBuffer.indexOut];
     myAdcBuffer.indexOut = (myAdcBuffer.indexOut + 1) % ADC_BUFFER_SIZE;
+    //printf("i/o: %d/%d\n", myAdcBuffer.indexIn, myAdcBuffer.indexOut);
     return returnValue;
   }
 }

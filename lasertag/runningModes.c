@@ -43,20 +43,15 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 
 #define MAX_BUFFER_SIZE 100 // Used for a generic message buffer.
 
-#define DETECTOR_HIT_ARRAY_SIZE                                                \
-  FILTER_FREQUENCY_COUNT // The array contains one location per user frequency.
+#define DETECTOR_HIT_ARRAY_SIZE FILTER_FREQUENCY_COUNT // The array contains one location per user frequency.
 
-#define HISTOGRAM_BAR_COUNT                                                    \
-  FILTER_FREQUENCY_COUNT // As many histogram bars as user filter frequencies.
+#define HISTOGRAM_BAR_COUNT FILTER_FREQUENCY_COUNT // As many histogram bars as user filter frequencies.
 
 #define ISR_CUMULATIVE_TIMER INTERVAL_TIMER_TIMER_0 // Used by the ISR.
-#define TOTAL_RUNTIME_TIMER                                                    \
-  INTERVAL_TIMER_TIMER_1 // Used to compute total run-time.
-#define MAIN_CUMULATIVE_TIMER                                                  \
-  INTERVAL_TIMER_TIMER_2 // Used to compute cumulative run-time in main.
+#define TOTAL_RUNTIME_TIMER INTERVAL_TIMER_TIMER_1 // Used to compute total run-time.
+#define MAIN_CUMULATIVE_TIMER INTERVAL_TIMER_TIMER_2 // Used to compute cumulative run-time in main.
 
-#define SYSTEM_TICKS_PER_HISTOGRAM_UPDATE                                      \
-  30000 // Update the histogram about 3 times per second.
+#define SYSTEM_TICKS_PER_HISTOGRAM_UPDATE 30000 // Update the histogram about 3 times per second.
 
 #define RUNNING_MODE_WARNING_TEXT_SIZE 2 // Upsize the text for visibility.
 #define RUNNING_MODE_WARNING_TEXT_COLOR DISPLAY_RED // Red for more visibility.
@@ -214,23 +209,17 @@ void runningModes_continuous() {
   interrupts_enableTimerGlobalInts(); // Allows the timer to generate
                                       // interrupts.
   interrupts_startArmPrivateTimer();  // Start the private ARM timer running.
-  uint16_t histogramSystemTicks =
-      0; // Only update the histogram display every so many ticks.
-  intervalTimer_reset(
-      ISR_CUMULATIVE_TIMER); // Used to measure ISR execution time.
-  intervalTimer_reset(
-      TOTAL_RUNTIME_TIMER); // Used to measure total program execution time.
-  intervalTimer_reset(
-      MAIN_CUMULATIVE_TIMER); // Used to measure main-loop execution time.
-  intervalTimer_start(
-      TOTAL_RUNTIME_TIMER);            // Start measuring total execution time.
+  uint16_t histogramSystemTicks = 0; // Only update the histogram display every so many ticks.
+  intervalTimer_reset(ISR_CUMULATIVE_TIMER); // Used to measure ISR execution time.
+  intervalTimer_reset(TOTAL_RUNTIME_TIMER); // Used to measure total program execution time.
+  intervalTimer_reset(MAIN_CUMULATIVE_TIMER); // Used to measure main-loop execution time.
+  intervalTimer_start(TOTAL_RUNTIME_TIMER);            // Start measuring total execution time.
   transmitter_setContinuousMode(true); // Run the transmitter continuously.
   interrupts_enableArmInts();  // The ARM will start seeing interrupts after
                                // this.
   transmitter_run();           // Start the transmitter.
   detectorInvocationCount = 0; // Keep track of detector invocations.
-  while (!(buttons_read() &
-           BUTTONS_BTN3_MASK)) { // Run until you detect btn3 pressed.
+  while (!(buttons_read() & BUTTONS_BTN3_MASK)) { // Run until you detect btn3 pressed.
     transmitter_setFrequencyNumber(runningModes_getFrequencySetting());
     detectorInvocationCount++; // Used for run-time statistics.
     histogramSystemTicks++;    // Keep track of ticks so you know when to update
@@ -244,12 +233,9 @@ void runningModes_continuous() {
     if (histogramSystemTicks >= SYSTEM_TICKS_PER_HISTOGRAM_UPDATE) {
       double powerValues[FILTER_FREQUENCY_COUNT]; // Copy the current power
                                                   // values to here.
-      filter_getCurrentPowerValues(
-          powerValues); // Copy the current power values.
-      histogram_plotUserFrequencyPower(
-          powerValues); // Plot the power values on the TFT.
-      histogramSystemTicks =
-          0; // Reset the tick count and wait for the next update time.
+      filter_getCurrentPowerValues(powerValues); // Copy the current power values.
+      histogram_plotUserFrequencyPower(powerValues); // Plot the power values on the TFT.
+      histogramSystemTicks = 0; // Reset the tick count and wait for the next update time.
     }
   }
   interrupts_disableArmInts();           // Stop interrupts.
@@ -275,24 +261,17 @@ void runningModes_shooter() {
   interrupts_enableTimerGlobalInts(); // Allows the timer to generate
                                       // interrupts.
   interrupts_startArmPrivateTimer();  // Start the private ARM timer running.
-  uint16_t histogramSystemTicks =
-      0; // Only update the histogram display every so many ticks.
-  intervalTimer_reset(
-      ISR_CUMULATIVE_TIMER); // Used to measure ISR execution time.
-  intervalTimer_reset(
-      TOTAL_RUNTIME_TIMER); // Used to measure total program execution time.
-  intervalTimer_reset(
-      MAIN_CUMULATIVE_TIMER); // Used to measure main-loop execution time.
-  intervalTimer_start(
-      TOTAL_RUNTIME_TIMER);   // Start measuring total execution time.
+  uint16_t histogramSystemTicks = 0; // Only update the histogram display every so many ticks.
+  intervalTimer_reset(ISR_CUMULATIVE_TIMER); // Used to measure ISR execution time.
+  intervalTimer_reset(TOTAL_RUNTIME_TIMER); // Used to measure total program execution time.
+  intervalTimer_reset(MAIN_CUMULATIVE_TIMER); // Used to measure main-loop execution time.
+  intervalTimer_start(TOTAL_RUNTIME_TIMER);   // Start measuring total execution time.
   interrupts_enableArmInts(); // The ARM will start seeing interrupts after
                               // this.
   lockoutTimer_start(); // Ignore erroneous hits at startup (when all power
                         // values are essentially 0).
-  while ((!(buttons_read() & BUTTONS_BTN3_MASK)) &&
-         hitCount < MAX_HIT_COUNT) { // Run until you detect btn3 pressed.
-    transmitter_setFrequencyNumber(
-        runningModes_getFrequencySetting());    // Read the switches and switch
+  while ((!(buttons_read() & BUTTONS_BTN3_MASK)) && hitCount < MAX_HIT_COUNT) { // Run until you detect btn3 pressed.
+    transmitter_setFrequencyNumber(runningModes_getFrequencySetting());    // Read the switches and switch
                                                 // frequency as required.
     intervalTimer_start(MAIN_CUMULATIVE_TIMER); // Measure run-time when you are
                                                 // doing something.
@@ -304,13 +283,11 @@ void runningModes_shooter() {
     if (detector_hitDetected()) {           // Hit detected
       hitCount++;                           // increment the hit count.
       detector_clearHit();                  // Clear the hit.
-      detector_hitCount_t
-          hitCounts[DETECTOR_HIT_ARRAY_SIZE]; // Store the hit-counts here.
+      detector_hitCount_t hitCounts[DETECTOR_HIT_ARRAY_SIZE]; // Store the hit-counts here.
       detector_getHitCounts(hitCounts);       // Get the current hit counts.
       histogram_plotUserHits(hitCounts);      // Plot the hit counts on the TFT.
     }
-    intervalTimer_stop(
-        MAIN_CUMULATIVE_TIMER); // All done with actual processing.
+    intervalTimer_stop(MAIN_CUMULATIVE_TIMER); // All done with actual processing.
   }
   interrupts_disableArmInts(); // Done with loop, disable the interrupts.
   hitLedTimer_turnLedOff();    // Save power :-)

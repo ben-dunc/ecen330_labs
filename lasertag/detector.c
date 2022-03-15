@@ -13,7 +13,7 @@
 #include <stdint.h>
 
 #define ADC_MAX_VALUE 4095
-#define FUDGE_FACTOR 1000
+#define FUDGE_FACTOR 500
 #define TEST_POWER_ARRAY_SIZE 12
 
 typedef uint16_t detector_hitCount_t;
@@ -58,13 +58,6 @@ void detector_init(bool ignoredFrequencies[]) {
 // Performs the hit detection algorithm to find the player who hit you.
 void detector_hitDetectionAlgorithm(double values[]) {
     uint8_t filterNum[FILTER_FREQUENCY_COUNT] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    /*
-    printf("\tunsorted: ");
-    for (uint16_t i = 0; i < FILTER_FREQUENCY_COUNT; i++) {
-        printf("%f ", values[i]);
-    }
-    printf("\n");
-    */
 
     int32_t i, j;
     int8_t filter_temp;
@@ -84,29 +77,12 @@ void detector_hitDetectionAlgorithm(double values[]) {
         filterNum[j + 1] = filter_temp;
     }
 
-    /*
-    printf("\tsorted: ");
-    //
-    for (uint16_t i = 0; i < FILTER_FREQUENCY_COUNT; i++) {
-        printf("%f ", values[i]);
-    }
-    printf("\n");
-
-    printf("\tfilter numbers: ");
-    //
-    for (uint16_t i = 0; i < FILTER_FREQUENCY_COUNT; i++) {
-        printf("%d ", filterNum[i]);
-    }
-    printf("\n");
-    */
-
     // Select the median value
     uint32_t median = values[FILTER_FREQUENCY_COUNT / 2];
     // compute threshold.
     uint32_t threshold = median * FUDGE_FACTOR;
     // Find the maximum power
     uint32_t max_power = values[FILTER_FREQUENCY_COUNT - 1];
-    //printf("\tMax power: %f\n", max_power);
     // See if the max power exceeds the threshold
     if (max_power > threshold) {
         // Its a hit!
@@ -151,25 +127,20 @@ void detector(bool interruptsCurrentlyEnabled) {
         numNewFilterInput++;
 
         // if filters have been called 10 times (decimation)
-        if (numNewFilterInput == 10) {
+        if (numNewFilterInput >= 10) {
             numNewFilterInput = 0;
-
-            //printf("ADC buffer size: %d\n", isr_adcBufferElementCount());
             
             // invoke FIR filter
             filter_firFilter();
-            //printf("ADC size after fir filter: %d\n", isr_adcBufferElementCount());
             // invoke IIR filters
             for (uint32_t j = 0; j < FILTER_FREQUENCY_COUNT; j++) {
                 filter_iirFilter(j);
             }
-            //printf("ADC size after iir filter: %d\n", isr_adcBufferElementCount());
 
             // compute power for all 10 banks
             for (uint32_t j = 0; j < FILTER_FREQUENCY_COUNT; j++) {
                 filter_computePower(j, false, false);
             }
-            //printf("ADC size after computing power: %d\n", isr_adcBufferElementCount());
 
             // if lockout timer running
             if (!lockoutTimer_running()) {
@@ -177,7 +148,7 @@ void detector(bool interruptsCurrentlyEnabled) {
                 filter_getCurrentPowerValues(powerValues);
                 detector_hitDetectionAlgorithm(powerValues);
                 
-                // if: detected hit and frequency is not ignored
+                // if a detected hit and frequency is not ignored
                 if (hitDetected && !detector_ignoreArray[hitFreqNum]) {
                     lockoutTimer_start();
                     hitLedTimer_start();

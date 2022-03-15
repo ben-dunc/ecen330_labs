@@ -8,7 +8,7 @@
 #define TRIGGER_GUN_TRIGGER_MIO_PIN 10
 #define GUN_TRIGGER_PRESSED 1
 #define RESET_TIMER 0
-#define DEBUG false
+#define DEBUG true
 
 // state machine
 typedef enum {

@@ -41,33 +41,6 @@ void transmitter_init() {
   currentState = init_st;
 }
 
-// Sets the mio pin high
-void transmitter_set_jf1_to_one() {
-  mio_writePin(TRANSMITTER_OUTPUT_PIN,
-               TRANSMITTER_HIGH_VALUE); // Write a '1' to JF-1.
-}
-
-// Sets the mio pin low
-void transmitter_set_jf1_to_zero() {
-  mio_writePin(TRANSMITTER_OUTPUT_PIN,
-               TRANSMITTER_LOW_VALUE); // Write a '1' to JF-1.
-}
-
-// Starts the transmitter.
-void transmitter_run() {
-  // update freqnum if necessary
-  if (freqNum != newFreqNum) {
-    transmitter_setFrequencyNumber(newFreqNum);
-  }
-
-  // starting state machine
-  currentState = init_st;
-  transmitterRunning = true;
-}
-
-// Returns true if the transmitter is still running.
-bool transmitter_running() { return transmitterRunning; }
-
 // Sets the frequency number. If this function is called while the
 // transmitter is running, the frequency will not be updated until the
 // transmitter stops and transmitter_run() is called again.
@@ -83,6 +56,41 @@ void transmitter_setFrequencyNumber(uint16_t frequencyNumber) {
 
 // Returns the current frequency setting.
 uint16_t transmitter_getFrequencyNumber() { return freqNum; }
+
+// Sets the mio pin high
+void transmitter_set_jf1_to_one() {
+  mio_writePin(TRANSMITTER_OUTPUT_PIN,
+               TRANSMITTER_HIGH_VALUE); // Write a '1' to JF-1.
+}
+
+// Sets the mio pin low
+void transmitter_set_jf1_to_zero() {
+  mio_writePin(TRANSMITTER_OUTPUT_PIN,
+               TRANSMITTER_LOW_VALUE); // Write a '1' to JF-1.
+}
+
+// Starts the transmitter.
+void transmitter_run() {
+  // update freqnum if necessary
+  /*
+  if (freqNum != newFreqNum) {
+    transmitter_setFrequencyNumber(newFreqNum);
+  }*/
+
+  // Compute a safe number from the switches.
+  uint16_t switchValue = switches_read() % FILTER_FREQUENCY_COUNT; 
+  // set the frequency number based upon switch value.
+  transmitter_setFrequencyNumber(switchValue); 
+
+
+  // starting state machine
+  currentState = init_st;
+  transmitterRunning = true;
+}
+
+// Returns true if the transmitter is still running.
+bool transmitter_running() { return transmitterRunning; }
+
 
 // Turns on testing mode.
 void transmitter_enableTestMode() { testing = true; }
@@ -142,7 +150,7 @@ void transmitter_tick() {
     break;
   case high_st:
     // transition to finished_st when reached wavelength
-    if (tickCount >= PULSE_WIDTH) {
+    if (!continuousMode && (tickCount >= PULSE_WIDTH)) {
       currentState = finished_st;
       // Output zeros to the jf1 pin.
       transmitter_set_jf1_to_zero();
@@ -157,7 +165,7 @@ void transmitter_tick() {
     break;
   case low_st:
     // transition to finished_st when reached wavelength
-    if (tickCount >= PULSE_WIDTH) {
+    if (!continuousMode && (tickCount >= PULSE_WIDTH)) {
       currentState = finished_st;
       // Output zeros to the jf1 pin.
       transmitter_set_jf1_to_zero();

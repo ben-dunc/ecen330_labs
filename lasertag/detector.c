@@ -263,19 +263,5 @@ void detector_runTest() {
     }
     
     printf("\n====================================================================\n\n");
-
-    // wait for user input for second test
-    // printf("Press btn 1 to advance to the system demonstration test.\n");
-    // // wait for button down
-    // while (!(buttons_read() & BUTTONS_BTN0_MASK));
-    // // wait for depress
-    // while ((buttons_read() & BUTTONS_BTN0_MASK));
-
-    // run system demonstration
-    // printf("\n================ Running SYSTEM DEMONSTRATION test ================\n");
-    // runningModes_continuous();
-    // runningModes_shooter();
-    // printf("\n====================================================================\n\n");
-
     printf("\n\nTHE END\n");
 }

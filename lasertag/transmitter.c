@@ -72,10 +72,9 @@ void transmitter_set_jf1_to_zero() {
 // Starts the transmitter.
 void transmitter_run() {
   // update freqnum if necessary
-  /*
   if (freqNum != newFreqNum) {
     transmitter_setFrequencyNumber(newFreqNum);
-  }*/
+  }
 
   // Compute a safe number from the switches.
   uint16_t switchValue = switches_read() % FILTER_FREQUENCY_COUNT; 

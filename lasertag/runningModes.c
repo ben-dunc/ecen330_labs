@@ -14,9 +14,10 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 #include <string.h>
 
 #include "runningModes.h"
-#include "buttons.h"
 #include "detector.h"
 #include "display.h"
+#include "buttons.h"
+#include "switches.h"
 #include "filter.h"
 #include "histogram.h"
 #include "hitLedTimer.h"
@@ -25,10 +26,6 @@ For questions, contact Brad Hutchings or Jeff Goeders, https://ece.byu.edu/
 #include "isr.h"
 #include "ledTimer.h"
 #include "lockoutTimer.h"
-#include "mio.h"
-#include "queue.h"
-#include "sound.h"
-#include "switches.h"
 #include "transmitter.h"
 #include "trigger.h"
 #include "utils.h"

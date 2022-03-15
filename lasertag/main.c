@@ -69,8 +69,7 @@ int main() {
   trigger_runTest();
   hitLedTimer_runTest();
   lockoutTimer_runTest();
-  while (1)
-    ; // Forever-while loop. Modify as you see fit.
+  while (1); // Forever-while loop. Modify as you see fit.
 #endif
 
 #ifdef RUNNING_MODE_M3_T3

@@ -80,6 +80,9 @@ double filter_computePower(uint16_t filterNumber, bool forceComputeFromScratch,
 // [filterNumber].
 double filter_getCurrentPowerValue(uint16_t filterNumber);
 
+// Sets a current power value for a specific filter number.
+void filter_setCurrentPowerValue(uint16_t filterNumber, double value);
+
 // Get a copy of the current power values.
 // This function copies the already computed values into a previously-declared
 // array so that they can be accessed from outside the filter software by the
@@ -138,7 +141,5 @@ queue_t *filter_getZQueue(uint16_t filterNumber);
 
 // Returns the address of the IIR output-queue for a specific filter-number.
 queue_t *filter_getIirOutputQueue(uint16_t filterNumber);
-
-// void filter_runTest();
 
 #endif /* FILTER_H_ */

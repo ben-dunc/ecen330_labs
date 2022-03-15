@@ -13,8 +13,9 @@
 #include <stdint.h>
 
 #define ADC_MAX_VALUE 4095
-#define FUDGE_FACTOR 500
+#define FUDGE_FACTOR 1000
 #define TEST_POWER_ARRAY_SIZE 12
+#define DIVIDE_BY_2 2
 
 typedef uint16_t detector_hitCount_t;
 
@@ -69,20 +70,28 @@ void detector_hitDetectionAlgorithm(double values[]) {
         filter_temp = filterNum[i];
         // Swap the elements if element at j is less than element at j+1
         while (j >= 0 && values[j] > temp) {
-            values[j + 1]  = values[j];
+            //values[j + 1]  = values[j];
             filterNum[j + 1] = filterNum[j];
             j--;
         }
-        values[j + 1] = temp;
+        //values[j + 1] = temp;
         filterNum[j + 1] = filter_temp;
     }
 
+    // Find the filter number with the highest energy.
+    uint8_t highest_filter = filterNum[FILTER_FREQUENCY_COUNT - 1];
     // Select the median value
-    uint32_t median = values[FILTER_FREQUENCY_COUNT / 2];
+    double median = values[FILTER_FREQUENCY_COUNT / DIVIDE_BY_2];
+    //printf("median: %8.4e", median);
     // compute threshold.
-    uint32_t threshold = median * FUDGE_FACTOR;
+    double threshold = median * FUDGE_FACTOR;
+    //printf("\tthreshold: %8.4e", threshold);
     // Find the maximum power
-    uint32_t max_power = values[FILTER_FREQUENCY_COUNT - 1];
+    double max_power = values[highest_filter];
+    //printf("\tmax power: %8.4e", max_power);
+    // Find the maximum power
+    double min_power = values[filterNum[0]];
+    //printf("\tmin power: %8.4e\n", min_power);
     // See if the max power exceeds the threshold
     if (max_power > threshold) {
         // Its a hit!
@@ -114,7 +123,7 @@ void detector(bool interruptsCurrentlyEnabled) {
             interrupts_disableArmInts();
         }
 
-        uint32_t rawAdcValue = isr_removeDataFromAdcBuffer();
+        double rawAdcValue = isr_removeDataFromAdcBuffer();
 
         // if it was disabled, enable it. \_(o_o)_/
         if (interruptsCurrentlyEnabled) {
@@ -122,6 +131,7 @@ void detector(bool interruptsCurrentlyEnabled) {
         }
 
         double scaledAdcValue = detector_getScaledAdcValue(rawAdcValue);
+        // printf("adc value: %f, %f\n", rawAdcValue, scaledAdcValue);
 
         filter_addNewInput(scaledAdcValue);
         numNewFilterInput++;
@@ -200,7 +210,11 @@ void detector_setFudgeFactorIndex(uint32_t factor) {
 
 // Encapsulate ADC scaling for easier testing.
 double detector_getScaledAdcValue(isr_AdcValue_t adcValue) {
-    return (((double) adcValue) / (ADC_MAX_VALUE / 2)) - 1;
+    if (adcValue > ADC_MAX_VALUE) {
+        adcValue = ADC_MAX_VALUE;
+    }
+    
+    return (((double) adcValue) / (ADC_MAX_VALUE / 2.0)) - 1;
 }
 
 /*******************************************************

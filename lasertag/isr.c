@@ -31,6 +31,7 @@ adcBuffer_t myAdcBuffer;
 
 // Initialize the adc buffer circular array.
 void adcBufferInit() {
+  // initialize the buffer to zero
   for(uint32_t i = 0; i < ADC_BUFFER_SIZE; ++i) {
     myAdcBuffer.data[i] = 0;
   }
@@ -51,12 +52,6 @@ void isr_init() {
 // This returns the number of values in the ADC buffer.
 uint32_t isr_adcBufferElementCount() {
   // // Determine if the indexIn has already wrapped around.
-  // if (myAdcBuffer.indexIn < myAdcBuffer.indexOut) {
-  //   // return the difference with the buffer size added to the indexIn.
-  //   return (myAdcBuffer.indexIn + ADC_BUFFER_SIZE - myAdcBuffer.indexOut);
-  // }
-  // // If indexIn is not less than indexOut, return the difference between the two.
-  // else return myAdcBuffer.indexIn - myAdcBuffer.indexOut;
   return myAdcBuffer.elementCount;
 }
 
@@ -64,11 +59,10 @@ uint32_t isr_adcBufferElementCount() {
 // This adds data to the ADC queue.
 void isr_addDataToAdcBuffer(uint32_t adcData) {
   // Check if the adc buffer is full
-  if (myAdcBuffer.elementCount >= (ADC_BUFFER_SIZE-1)) {
-    printf("ADC buffer is full!\n");
+  if (myAdcBuffer.elementCount >= (ADC_BUFFER_SIZE - 1)) {
     isr_removeDataFromAdcBuffer();
   }
-  // If the buffer isn't full, add in the given data.
+  // Add in the given data.
   myAdcBuffer.data[myAdcBuffer.indexIn] = adcData;
   // Increment indexIn, and wrap around the array if needed.
   myAdcBuffer.indexIn = ++myAdcBuffer.indexIn % ADC_BUFFER_SIZE;
@@ -81,6 +75,7 @@ void isr_addDataToAdcBuffer(uint32_t adcData) {
 uint32_t isr_removeDataFromAdcBuffer() {
   // Check if buffer is empty.
   if (myAdcBuffer.elementCount != 0) {
+    // return the value at the index out and increment index out.
     uint32_t returnValue = myAdcBuffer.data[myAdcBuffer.indexOut];
     myAdcBuffer.data[myAdcBuffer.indexOut] = 0;
     myAdcBuffer.indexOut = ++myAdcBuffer.indexOut % ADC_BUFFER_SIZE;
@@ -95,6 +90,7 @@ uint32_t isr_removeDataFromAdcBuffer() {
 void isr_function() {
   // Read the most recent value from the ADC and put add to adc buffer.
   isr_addDataToAdcBuffer(interrupts_getAdcData());
+
   // Call state machine tick functions
   transmitter_tick();
   trigger_tick();

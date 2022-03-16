@@ -16,6 +16,7 @@
 #define FUDGE_FACTOR 1000
 #define TEST_POWER_ARRAY_SIZE 12
 #define DIVIDE_BY_2 2
+#define ORDERED_FREQ {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 
 typedef uint16_t detector_hitCount_t;
 
@@ -26,6 +27,8 @@ static uint32_t hitFreqNum = 0;
 static uint32_t detector_hitArray[FILTER_FREQUENCY_COUNT] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static uint32_t detector_ignoreArray[FILTER_FREQUENCY_COUNT];
 static double powerValues[FILTER_FREQUENCY_COUNT];
+static uint32_t fudgeFactor = 1000;
+static bool ignoreAllHits = false;
 
 // test values
 volatile static bool testFlag = false; 
@@ -58,14 +61,7 @@ void detector_init(bool ignoredFrequencies[]) {
 
 // Performs the hit detection algorithm to find the player who hit you.
 void detector_hitDetectionAlgorithm(double values[]) {
-    uint8_t filterNum[FILTER_FREQUENCY_COUNT] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    /*
-    printf("\tunsorted: ");
-    for (uint16_t i = 0; i < FILTER_FREQUENCY_COUNT; i++) {
-        printf("%f ", values[i]);
-    }
-    printf("\n");
-    */
+    uint8_t filterNum[FILTER_FREQUENCY_COUNT] = ORDERED_FREQ;
 
     int32_t i, j;
     int8_t filter_temp;
@@ -77,11 +73,11 @@ void detector_hitDetectionAlgorithm(double values[]) {
         filter_temp = filterNum[i];
         // Swap the elements if element at j is less than element at j+1
         while ((j >= 0) && (values[j] > temp)) {
-            //values[j + 1]  = values[j];
+            values[j + 1]  = values[j];
             filterNum[j + 1] = filterNum[j];
             j--;
         }
-        //values[j + 1] = temp;
+        values[j + 1] = temp;
         filterNum[j + 1] = filter_temp;
     }
 
@@ -92,9 +88,10 @@ void detector_hitDetectionAlgorithm(double values[]) {
     // compute threshold.
     double threshold = median * FUDGE_FACTOR;
     // Find the maximum power
-    double max_power = values[highest_filter];
+    double max_power = values[FILTER_FREQUENCY_COUNT - 1];
     // Find the maximum power
     double min_power = values[filterNum[0]];
+
     // See if the max power exceeds the threshold
     if (max_power > threshold) {
         // Its a hit!
@@ -134,31 +131,27 @@ void detector(bool interruptsCurrentlyEnabled) {
         }
 
         double scaledAdcValue = detector_getScaledAdcValue(rawAdcValue);
-        // printf("adc value: %f, %f\n", rawAdcValue, scaledAdcValue);
-
+        
+        //add the scaled adc values to the input filter.
         filter_addNewInput(scaledAdcValue);
         numNewFilterInput++;
 
         // if filters have been called 10 times (decimation)
         if (numNewFilterInput == 10) {
             numNewFilterInput = 0;
-
-            //printf("ADC buffer size: %d\n", isr_adcBufferElementCount());
             
             // invoke FIR filter
             filter_firFilter();
-            //printf("ADC size after fir filter: %d\n", isr_adcBufferElementCount());
+
             // invoke IIR filters
             for (uint32_t j = 0; j < FILTER_FREQUENCY_COUNT; j++) {
                 filter_iirFilter(j);
             }
-            //printf("ADC size after iir filter: %d\n", isr_adcBufferElementCount());
 
             // compute power for all 10 banks
             for (uint32_t j = 0; j < FILTER_FREQUENCY_COUNT; j++) {
                 filter_computePower(j, false, false);
             }
-            //printf("ADC size after computing power: %d\n", isr_adcBufferElementCount());
 
             // if lockout timer running
             if (!lockoutTimer_running()) {
@@ -166,7 +159,7 @@ void detector(bool interruptsCurrentlyEnabled) {
                 filter_getCurrentPowerValues(powerValues);
                 detector_hitDetectionAlgorithm(powerValues);
                 
-                // if: detected hit and frequency is not ignored
+                // if detected hit and frequency is not ignored
                 if (hitDetected && !detector_ignoreArray[hitFreqNum]) {
                     lockoutTimer_start();
                     hitLedTimer_start();
@@ -197,7 +190,7 @@ void detector_clearHit() {
 // modes. The detector will ignore all hits if the flag is true, otherwise will
 // respond to hits normally.
 void detector_ignoreAllHits(bool flagValue) {
-    // do we need to do something here yet?
+    ignoreAllHits = flagValue;
 }
 
 // Get the current hit counts.
@@ -213,16 +206,12 @@ void detector_getHitCounts(detector_hitCount_t hitArray[]) {
 // Allows the fudge-factor index to be set externally from the detector.
 // The actual values for fudge-factors is stored in an array found in detector.c
 void detector_setFudgeFactorIndex(uint32_t factor) {
-
+    fudgeFactor = factor;
 }
 
 // Encapsulate ADC scaling for easier testing.
 double detector_getScaledAdcValue(isr_AdcValue_t adcValue) {
-    if (adcValue > ADC_MAX_VALUE) {
-        adcValue = ADC_MAX_VALUE;
-    }
-    
-    return (((double) adcValue) / (ADC_MAX_VALUE / 2.0)) - 1;
+    return (((double) adcValue) / (ADC_MAX_VALUE / (double) DIVIDE_BY_2)) - 1;
 }
 
 /*******************************************************

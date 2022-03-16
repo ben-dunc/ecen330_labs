@@ -23,11 +23,11 @@
 typedef enum {
   init_st,
   illuminate_st,
-  finished_st,
+  wait_st,
 } led_st_t;
 
 static led_st_t currentState;
-static bool enable;
+//static bool enable;
 volatile static bool timerStartFlag;
 static uint32_t timer;
 
@@ -47,10 +47,10 @@ void hitLedTimer_init() {
 void hitLedTimer_start() { timerStartFlag = true; }
 
 // Disables the hitLedTimer.
-void hitLedTimer_disable() { enable = false; }
+void hitLedTimer_disable() { timerStartFlag = false; }
 
 // Enables the hitLedTimer.
-void hitLedTimer_enable() { enable = true; }
+void hitLedTimer_enable() { timerStartFlag = true; }
 
 // Returns true if the timer is currently running.
 bool hitLedTimer_running() { return timerStartFlag; }
@@ -77,7 +77,12 @@ void hitLedTimer_tick() {
   switch (currentState) {
   case init_st:
     // Check to see if the enable flag is on.
-    if (enable && timerStartFlag) {
+    currentState = wait_st;
+    break;
+
+    case wait_st:
+    // Check to see if the enable flag is on.
+    if (timerStartFlag) {
       // Illuminate LED LD0.
       hitLedTimer_turnLedOn();
       currentState = illuminate_st;
@@ -87,8 +92,8 @@ void hitLedTimer_tick() {
 
   case illuminate_st:
     // Check to see if the enable flag is on.
-    if (!enable) {
-      currentState = finished_st;
+    if (!timerStartFlag) {
+      currentState = wait_st;
       // Turn off LEDs.
       hitLedTimer_turnLedOff();
     }
@@ -96,15 +101,9 @@ void hitLedTimer_tick() {
     else if (timer >= MAX_TIMER_COUNT) {
       // Turn off LED LD00.
       hitLedTimer_turnLedOff();
-      currentState = finished_st;
+      timerStartFlag = false;
+      currentState = wait_st;
       timer = RESET_VALUE;
-    }
-    break;
-
-  case finished_st:
-    // Check to see if the enable flag is on.
-    if (enable) {
-      currentState = init_st;
     }
     break;
   }
@@ -118,8 +117,7 @@ void hitLedTimer_tick() {
     // Increment timer.
     timer++;
     break;
-  case finished_st:
-    timerStartFlag = false;
+  case wait_st:
     break;
   }
 }

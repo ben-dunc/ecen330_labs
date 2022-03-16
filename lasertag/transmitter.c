@@ -30,11 +30,7 @@ static bool testing = false;
 
 // Standard init function.
 void transmitter_init() {
-  // false disables any debug printing if there is a system failure during init.
-  //mio_init(false);
-  //buttons_init();  // Using buttons
-  //switches_init(); // and switches.
-
+  // Initialize hardware if needed.
   // Configure the signal direction of the pin to be an output.
   mio_setPinAsOutput(TRANSMITTER_OUTPUT_PIN);
   // Initialize the state machine.
@@ -49,7 +45,9 @@ void transmitter_setFrequencyNumber(uint16_t frequencyNumber) {
   if (continuousMode || !transmitterRunning) {
     freqNum = frequencyNumber;
     newFreqNum = freqNum;
-  } else {
+  } 
+  // If the transmitter isn't running anymore.
+  else {
     newFreqNum = frequencyNumber;
   }
 }
@@ -201,8 +199,6 @@ void transmitter_tick() {
     // do nothing
     break;
   }
-
-  // printf("tick count:\t %d\n", tickCount);
 }
 
 // Tests the transmitter.
@@ -316,8 +312,7 @@ void transmitter_runContinuousTest() {
   }
 
   // wait till depressed
-  while ((buttons_read() & BUTTONS_BTN1_MASK))
-    ;
+  while ((buttons_read() & BUTTONS_BTN1_MASK));
 
   printf("Finished continuous "
          "test.\n==========================================\n");

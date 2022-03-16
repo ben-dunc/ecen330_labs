@@ -40,9 +40,8 @@ bool triggerPressed() {
 // Determines whether the trigger switch of the gun is connected (see discussion
 // in lab web pages). Initializes the mio subsystem.
 void trigger_init() {
-  // false disables any debug printing if there is a system failure during init.
   //mio_init(false);
-  //buttons_init(); // Using buttons
+  //buttons_init();
   // Set the current state to initial state.
   mio_setPinAsInput(TRIGGER_GUN_TRIGGER_MIO_PIN);
   // If the trigger is pressed when trigger_init() is called, assume that the

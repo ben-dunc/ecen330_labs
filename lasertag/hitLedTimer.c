@@ -34,9 +34,9 @@ static uint32_t timer;
 // Need to init things.
 void hitLedTimer_init() {
   // Initialize the leds.
-  leds_init(false);
+  //leds_init(false);
   // false disables any debug printing if there is a system failure during init.
-  mio_init(false);
+  //mio_init(false);
   // Configure the signal direction of the pin to be an output.
   mio_setPinAsOutput(HIT_LED_TIMER_OUTPUT_PIN);
   currentState = init_st;

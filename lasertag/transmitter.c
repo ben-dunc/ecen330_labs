@@ -31,9 +31,9 @@ static bool testing = false;
 // Standard init function.
 void transmitter_init() {
   // false disables any debug printing if there is a system failure during init.
-  mio_init(false);
-  buttons_init();  // Using buttons
-  switches_init(); // and switches.
+  //mio_init(false);
+  //buttons_init();  // Using buttons
+  //switches_init(); // and switches.
 
   // Configure the signal direction of the pin to be an output.
   mio_setPinAsOutput(TRANSMITTER_OUTPUT_PIN);

@@ -71,12 +71,12 @@ void detector_hitDetectionAlgorithm(double values[]) {
     int8_t filter_temp;
     double temp;
     // sort the data
-    for (i = 1; i < FILTER_FREQUENCY_COUNT; i++) {
+    for (i = 0; i < FILTER_FREQUENCY_COUNT; i++) {
         temp = values[i];
         j = i - 1;
         filter_temp = filterNum[i];
         // Swap the elements if element at j is less than element at j+1
-        while (j >= 0 && values[j] > temp) {
+        while ((j >= 0) && (values[j] > temp)) {
             //values[j + 1]  = values[j];
             filterNum[j + 1] = filterNum[j];
             j--;
@@ -89,16 +89,12 @@ void detector_hitDetectionAlgorithm(double values[]) {
     uint8_t highest_filter = filterNum[FILTER_FREQUENCY_COUNT - 1];
     // Select the median value
     double median = values[FILTER_FREQUENCY_COUNT / DIVIDE_BY_2];
-    //printf("median: %8.4e", median);
     // compute threshold.
     double threshold = median * FUDGE_FACTOR;
-    //printf("\tthreshold: %8.4e", threshold);
     // Find the maximum power
     double max_power = values[highest_filter];
-    //printf("\tmax power: %8.4e", max_power);
     // Find the maximum power
     double min_power = values[filterNum[0]];
-    //printf("\tmin power: %8.4e\n", min_power);
     // See if the max power exceeds the threshold
     if (max_power > threshold) {
         // Its a hit!

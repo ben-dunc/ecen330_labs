@@ -8,7 +8,7 @@
 #define TRIGGER_GUN_TRIGGER_MIO_PIN 10
 #define GUN_TRIGGER_PRESSED 1
 #define RESET_TIMER 0
-#define DEBUG true
+#define DEBUG false
 
 // state machine
 typedef enum {
@@ -41,8 +41,8 @@ bool triggerPressed() {
 // in lab web pages). Initializes the mio subsystem.
 void trigger_init() {
   // false disables any debug printing if there is a system failure during init.
-  mio_init(false);
-  buttons_init(); // Using buttons
+  //mio_init(false);
+  //buttons_init(); // Using buttons
   // Set the current state to initial state.
   mio_setPinAsInput(TRIGGER_GUN_TRIGGER_MIO_PIN);
   // If the trigger is pressed when trigger_init() is called, assume that the

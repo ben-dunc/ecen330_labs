@@ -31,8 +31,12 @@ adcBuffer_t myAdcBuffer;
 
 // Initialize the adc buffer circular array.
 void adcBufferInit() {
+  for(uint32_t i = 0; i < ADC_BUFFER_SIZE; ++i) {
+    myAdcBuffer.data[i] = 0;
+  }
   myAdcBuffer.indexIn = 0;
   myAdcBuffer.indexOut = 0;
+  myAdcBuffer.elementCount = 0;
 }
 
 // Performs inits for anything in isr.c
@@ -46,29 +50,29 @@ void isr_init() {
 
 // This returns the number of values in the ADC buffer.
 uint32_t isr_adcBufferElementCount() {
-  // Determine if the indexIn has already wrapped around.
-  if (myAdcBuffer.indexIn < myAdcBuffer.indexOut) {
-    // return the difference with the buffer size added to the indexIn.
-    return (myAdcBuffer.indexIn + ADC_BUFFER_SIZE - myAdcBuffer.indexOut);
-  }
-  // If indexIn is not less than indexOut, return the difference between the two.
-  else return myAdcBuffer.indexIn - myAdcBuffer.indexOut;
+  // // Determine if the indexIn has already wrapped around.
+  // if (myAdcBuffer.indexIn < myAdcBuffer.indexOut) {
+  //   // return the difference with the buffer size added to the indexIn.
+  //   return (myAdcBuffer.indexIn + ADC_BUFFER_SIZE - myAdcBuffer.indexOut);
+  // }
+  // // If indexIn is not less than indexOut, return the difference between the two.
+  // else return myAdcBuffer.indexIn - myAdcBuffer.indexOut;
+  return myAdcBuffer.elementCount;
 }
 
 
 // This adds data to the ADC queue.
 void isr_addDataToAdcBuffer(uint32_t adcData) {
   // Check if the adc buffer is full
-  if (isr_adcBufferElementCount() == ADC_BUFFER_SIZE) {
+  if (myAdcBuffer.elementCount >= (ADC_BUFFER_SIZE-1)) {
     printf("ADC buffer is full!\n");
+    isr_removeDataFromAdcBuffer();
   }
   // If the buffer isn't full, add in the given data.
-  else {
-    myAdcBuffer.data[myAdcBuffer.indexIn] = adcData;
-    // Increment indexIn, and wrap around the array if needed.
-    myAdcBuffer.indexIn = ++myAdcBuffer.indexIn % ADC_BUFFER_SIZE;
-    myAdcBuffer.data[myAdcBuffer.indexIn] = adcData;
-  }
+  myAdcBuffer.data[myAdcBuffer.indexIn] = adcData;
+  // Increment indexIn, and wrap around the array if needed.
+  myAdcBuffer.indexIn = ++myAdcBuffer.indexIn % ADC_BUFFER_SIZE;
+  ++myAdcBuffer.elementCount;
 }
 
 // Removes a single item from the ADC buffer.
@@ -76,10 +80,16 @@ void isr_addDataToAdcBuffer(uint32_t adcData) {
 // Simply returns a default value of 0 if the buffer is currently empty.
 uint32_t isr_removeDataFromAdcBuffer() {
   // Check if buffer is empty.
+  if (myAdcBuffer.elementCount != 0) {
     uint32_t returnValue = myAdcBuffer.data[myAdcBuffer.indexOut];
+    myAdcBuffer.data[myAdcBuffer.indexOut] = 0;
     myAdcBuffer.indexOut = ++myAdcBuffer.indexOut % ADC_BUFFER_SIZE;
+    --myAdcBuffer.elementCount;
     return returnValue;
   }
+  // If empty, return 0.
+  else return 0;
+}
 
 // This function is invoked by the timer interrupt at 100 kHz.
 void isr_function() {
